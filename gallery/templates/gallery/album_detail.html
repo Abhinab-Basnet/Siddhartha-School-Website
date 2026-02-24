@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'album_list' %}">Gallery</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ album.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">{{ album.title }}</h1>
+        <p class="text-muted">{{ album.description }}</p>
+        <hr class="w-25 mx-auto">
+    </div>
+
+    <div class="row g-3"> {% for photo in album.photos.all %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <img src="{{ photo.image.url }}" 
+                     class="card-img-top img-fluid rounded" 
+                     alt="{{ photo.caption }}"
+                     style="height: 200px; object-fit: cover; cursor: pointer;"
+                     onclick="window.open(this.src)">
+                
+                {% if photo.caption %}
+                <div class="card-footer bg-white border-0">
+                    <small class="text-muted">{{ photo.caption }}</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="alert alert-info">This album doesn't have any photos yet. Check back soon!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-5 mb-5">
+        <a href="{% url 'album_list' %}" class="btn btn-secondary">← Back to All Albums</a>
+    </div>
+</div>
+{% endblock %}

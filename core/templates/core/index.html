@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 text-center">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Welcome to Our School</h1>
+        <p class="fs-4">Empowering students to achieve excellence since 1990.</p>
+        <button class="btn btn-primary btn-lg" type="button">Admission Open</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="mb-4">Latest Notices</h2>
+            <div class="list-group">
+                {% for notice in notices %}
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 text-primary">{{ notice.title }}</h5>
+                            <small class="text-muted">{{ notice.date_posted|date:"M d, Y" }}</small>
+                        </div>
+                        <p class="mb-1">{{ notice.content|truncatewords:20 }}</p>
+                    </div>
+                {% empty %}
+                    <div class="list-group-item">
+                        <p class="mb-0">No notices posted at this time.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4">Quick Links</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#" class="text-decoration-none">🔓 Student Portal</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="text-decoration-none">💳 Online Fees</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'faculty_list' %}" class="text-decoration-none">👨‍🏫 Faculty Directory</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

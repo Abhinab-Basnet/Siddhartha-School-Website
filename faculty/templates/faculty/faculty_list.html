@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Our Distinguished Faculty</h1>
+    
+    <div class="row">
+        {% for teacher in teachers %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ teacher.image.url }}" class="card-img-top" alt="{{ teacher.name }}" style="height: 300px; object-fit: cover;">
+                
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">{{ teacher.name }}</h5>
+                    <p class="text-muted mb-1">{{ teacher.designation }}</p>
+                    <p class="badge bg-primary">{{ teacher.department }}</p>
+                    <hr>
+                    <p class="small text-muted">{{ teacher.email }}</p>
+                    <a href="#" class="btn btn-outline-dark btn-sm">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No faculty members found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
