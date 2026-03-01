@@ -1,15 +1,30 @@
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from news.models import Notices
 from django.contrib import messages
+from events.models import Event
+from gallery.models import Photo
 from .models import ContactMessage
 
 # Create your views here.
 def home(request):
-    all_notices= Notices.objects.all().order_by('-date_posted')
     context = {
-        'notices': all_notices
+        # Notices
+        'notices': Notices.objects.order_by('-date_posted')[:5],
+        'latest_notices': Notices.objects.order_by('-date_posted')[:10],
+        
+        # Events
+        'upcoming_events': Event.objects.filter(
+            event_date__gte=timezone.now().date()
+        ).order_by('event_date')[:4],
+        
+        # Gallery
+        'gallery_photos': Photo.objects.order_by('-id')[:5],
+        
+        # # School Info (Using the model we created in the 'about' app)
+        # 'school_info': SchoolCoreInfo.objects.first(),
     }
-    return render(request, 'core/index.html',context)
+    return render(request, 'core/index.html', context)
 
 def contact(request):
     if request.method == "POST":

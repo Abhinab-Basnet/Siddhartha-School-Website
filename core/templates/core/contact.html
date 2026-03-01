@@ -1,59 +1,578 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   CONTACT PAGE — No banner, straight to content
+   Clean two-column layout, navy + white
+============================================= */
+
+.contact-page {
+    background: #f2f5f9;
+    min-height: 100vh;
+    padding: 60px 0 80px;
+}
+
+.contact-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+
+/* ── PAGE HEADING ────────────────────────── */
+.contact-heading {
+    margin-bottom: 44px;
+}
+
+.contact-heading .c-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #5a7a9a;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.contact-heading .c-label::before,
+.contact-heading .c-label::after {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: #b0bac8;
+}
+
+.contact-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 900;
+    color: #0a1628;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    letter-spacing: -0.3px;
+}
+
+.contact-heading h1 span { color: #3b6ea5; }
+
+.contact-heading p {
+    font-size: 0.88rem;
+    color: #7a8a9e;
+    font-family: 'DM Sans', sans-serif;
+    max-width: 480px;
+    line-height: 1.65;
+    margin: 0;
+}
+
+/* ── TWO-COLUMN LAYOUT ───────────────────── */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* ── LEFT PANEL ──────────────────────────── */
+.contact-left { display: flex; flex-direction: column; gap: 16px; }
+
+/* info card */
+.contact-info-card {
+    background: #0a1628;
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-info-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 70%);
+}
+
+.contact-info-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+}
+
+.cic-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 6px;
+}
+
+.cic-sub {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+    font-family: 'DM Sans', sans-serif;
+    margin: 0 0 28px;
+    line-height: 1.5;
+}
+
+.cic-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin-bottom: 24px;
+}
+
+/* contact info rows */
+.cic-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.cic-row:last-of-type { margin-bottom: 0; }
+
+.cic-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a0b4cc;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.cic-text-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.3);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.cic-text-value {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.5;
+}
+
+.cic-text-value a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.cic-text-value a:hover { color: #fff; }
+
+/* hours card */
+.contact-hours-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e4e9f0;
+    box-shadow: 0 2px 12px rgba(10,22,40,0.05);
+}
+
+.chc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0a1628;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chc-title i { color: #5a7a9a; font-size: 0.85rem; }
+
+.chc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f3f7;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+}
+
+.chc-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.chc-day { color: #4a5568; font-weight: 500; }
+.chc-time { color: #0a1628; font-weight: 600; }
+.chc-closed { color: #e53e3e; font-weight: 600; }
+
+/* social links */
+.contact-socials {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid #e4e9f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cs-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8a96a3;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.cs-icons { display: flex; gap: 8px; }
+
+.cs-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    border: 1px solid #e4e9f0;
+    background: #f7f9fc;
+    color: #5a7a9a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.cs-icon:hover { background: #0a1628; color: #fff; border-color: #0a1628; }
+
+/* ── RIGHT PANEL — FORM ──────────────────── */
+.contact-form-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px;
+    border: 1px solid #e4e9f0;
+    box-shadow: 0 4px 24px rgba(10,22,40,0.07);
+}
+
+.cfc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0a1628;
+    margin: 0 0 6px;
+}
+
+.cfc-sub {
+    font-size: 0.8rem;
+    color: #8a96a3;
+    font-family: 'DM Sans', sans-serif;
+    margin: 0 0 28px;
+}
+
+/* success alert */
+.c-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+}
+
+.c-alert i { color: #16a34a; font-size: 1rem; margin-top: 1px; flex-shrink: 0; }
+.c-alert p { font-size: 0.83rem; color: #166534; margin: 0; font-family: 'DM Sans', sans-serif; line-height: 1.5; }
+
+/* form fields */
+.c-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.c-field { margin-bottom: 18px; }
+
+.c-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #4a5568;
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 7px;
+}
+
+.c-label .req { color: #e53e3e; margin-left: 2px; }
+
+.c-input, .c-textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #e4e9f0;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #0a1628;
+    background: #fafbfc;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    resize: none;
+}
+
+.c-input::placeholder, .c-textarea::placeholder { color: #b8c4d0; }
+
+.c-input:focus, .c-textarea:focus {
+    border-color: #0a1628;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(10,22,40,0.07);
+}
+
+.c-textarea { min-height: 130px; }
+
+/* submit button */
+.c-submit {
+    width: 100%;
+    padding: 13px;
+    background: #0a1628;
+    color: #fff;
+    border: none;
+    border-radius: 11px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s;
+    margin-top: 4px;
+}
+
+.c-submit:hover {
+    background: #122040;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(10,22,40,0.2);
+}
+
+.c-submit:active { transform: translateY(0); }
+
+/* ── MAP ─────────────────────────────────── */
+.contact-map {
+    margin-top: 28px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e4e9f0;
+    box-shadow: 0 2px 12px rgba(10,22,40,0.06);
+}
+
+.contact-map iframe {
+    display: block;
+    width: 100%;
+    height: 260px;
+    border: none;
+}
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 820px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .c-form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .contact-page { padding: 36px 0 60px; }
+    .contact-form-card { padding: 24px 20px; }
+    .contact-info-card { padding: 24px; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5 fw-bold">Get In Touch</h1>
+<div class="contact-page">
+<div class="contact-wrap">
 
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="bg-light p-4 rounded shadow-sm">
-                <h4>School Office</h4>
-                <p>📍 123 Education Lane, Kathmandu, Nepal</p>
-                <p>📞 +977-1-4000000</p>
-                <p>✉️ info@schoolname.edu.np</p>
-                
-                <hr>
-                
-                <div class="ratio ratio-16x9 mt-3">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14129.610530752494!2d85.312329!3d27.708954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb198a307baabf%3A0xb5137c1bf18db1ea!2sKathmandu!5e0!3m2!1sen!2snp!4v1700000000000" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    {% if messages %}
-                       {% for message in messages %}
-                          <div class="alert alert-success">
-                             {{ message }}
-                          </div>
-                       {% endfor %}
-                    {% endif %}
-                    
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Subject</label>
-                            <input type="text" name="subject" class="form-control" placeholder="How can we help?">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Message</label>
-                            <textarea name="message" class="form-control" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Send Message</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+    {# ── PAGE HEADING ── #}
+    <div class="contact-heading">
+        <div class="c-label">Reach Out</div>
+        <h1>Get In <span>Touch</span></h1>
+        <p>Have a question, concern, or just want to say hello? We'd love to hear from you. Fill in the form and we'll get back to you shortly.</p>
     </div>
+
+    {# ── GRID ── #}
+    <div class="contact-grid">
+
+    
+        <div class="contact-left">
+
+            {# Dark info card #}
+            <div class="contact-info-card">
+                <h2 class="cic-title">School Office</h2>
+                <p class="cic-sub">Our team is available during school hours to assist you.</p>
+
+                <div class="cic-divider"></div>
+
+                <div class="cic-row">
+                    <div class="cic-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                    <div>
+                        <span class="cic-text-label">Address</span>
+                        <span class="cic-text-value">Biratnagar, Koshi Province, Nepal</span>
+                    </div>
+                </div>
+
+                <div class="cic-row">
+                    <div class="cic-icon"><i class="bi bi-telephone-fill"></i></div>
+                    <div>
+                        <span class="cic-text-label">Phone</span>
+                        <span class="cic-text-value">
+                            <a href="tel:+97721000000">021-XXXXXX</a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="cic-row">
+                    <div class="cic-icon"><i class="bi bi-envelope-fill"></i></div>
+                    <div>
+                        <span class="cic-text-label">Email</span>
+                        <span class="cic-text-value">
+                            <a href="mailto:info@siddhartha.edu.np">info@siddhartha.edu.np</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {# Office hours #}
+            <div class="contact-hours-card">
+                <h3 class="chc-title">
+                    <i class="bi bi-clock"></i> Office Hours
+                </h3>
+                <div class="chc-row">
+                    <span class="chc-day">Sunday – Friday</span>
+                    <span class="chc-time">6:00 AM – 4:00 PM</span>
+                </div>
+                <div class="chc-row">
+                    <span class="chc-day">Saturday</span>
+                    <span class="chc-closed">Closed</span>
+                </div>
+                <div class="chc-row">
+                    <span class="chc-day">Public Holidays</span>
+                    <span class="chc-closed">Closed</span>
+                </div>
+            </div>
+
+            {# Social links #}
+            <div class="contact-socials">
+                <span class="cs-label">Follow Us</span>
+                <div class="cs-icons">
+                    <a href="#" class="cs-icon" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="cs-icon" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="cs-icon" title="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="cs-icon" title="Twitter / X"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            {# Map #}
+            <div class="contact-map">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14129.610530752494!2d85.312329!3d27.708954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb198a307baabf%3A0xb5137c1bf18db1ea!2sKathmandu!5e0!3m2!1sen!2snp!4v1700000000000"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+
+        </div>{# end left #}
+
+        
+        <div class="contact-form-card">
+
+            <h2 class="cfc-title">Send Us a Message</h2>
+            <p class="cfc-sub">We'll respond within 1–2 business days.</p>
+
+            {# Success messages #}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="c-alert">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <p>{{ message }}</p>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                {# Name + Email in a row #}
+                <div class="c-form-row">
+                    <div class="c-field">
+                        <label class="c-label" for="c-name">
+                            Full Name <span class="req">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="c-name"
+                            name="name"
+                            class="c-input"
+                            placeholder="Your full name"
+                            required>
+                    </div>
+                    <div class="c-field">
+                        <label class="c-label" for="c-email">
+                            Email Address <span class="req">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="c-email"
+                            name="email"
+                            class="c-input"
+                            placeholder="name@example.com"
+                            required>
+                    </div>
+                </div>
+
+                <div class="c-field">
+                    <label class="c-label" for="c-subject">Subject</label>
+                    <input
+                        type="text"
+                        id="c-subject"
+                        name="subject"
+                        class="c-input"
+                        placeholder="How can we help you?">
+                </div>
+
+                <div class="c-field">
+                    <label class="c-label" for="c-message">
+                        Message <span class="req">*</span>
+                    </label>
+                    <textarea
+                        id="c-message"
+                        name="message"
+                        class="c-textarea"
+                        placeholder="Write your message here..."
+                        required></textarea>
+                </div>
+
+                <button type="submit" class="c-submit">
+                    <i class="bi bi-send-fill"></i>
+                    Send Message
+                </button>
+
+            </form>
+        </div>{# end form card #}
+
+    </div>{# end grid #}
+
+</div>
 </div>
 {% endblock %}

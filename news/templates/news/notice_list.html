@@ -1,52 +1,521 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   NOTICE BOARD PAGE
+   Clean bulletin-board aesthetic
+   Navy primary · off-white · subtle accents
+============================================= */
+
+.notice-page { background: #f2f5f9; min-height: 100vh; }
+
+/* ── HERO ────────────────────────────────── */
+.notice-hero {
+    background: linear-gradient(135deg, #0a1628 0%, #122040 55%, #1a3060 100%);
+    padding: 64px 0 52px;
+    position: relative;
+    overflow: hidden;
+}
+
+.notice-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.notice-hero::after {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.07), transparent 70%);
+}
+
+.notice-hero-inner {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto; padding: 0 28px;
+    display: flex; align-items: flex-end;
+    justify-content: space-between; gap: 24px; flex-wrap: wrap;
+}
+
+.notice-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2.5px; color: rgba(255,255,255,0.35);
+    margin-bottom: 14px;
+    font-family: 'DM Sans', sans-serif;
+}
+.notice-breadcrumb a { color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.2s; }
+.notice-breadcrumb a:hover { color: rgba(255,255,255,0.65); }
+
+.notice-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 900; color: #fff;
+    line-height: 1.1; margin: 0 0 10px;
+    letter-spacing: -0.3px;
+}
+.notice-hero h1 span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,0.3);
+}
+
+.notice-hero-sub {
+    font-size: 0.88rem; color: rgba(255,255,255,0.42);
+    max-width: 380px; line-height: 1.65; margin: 0;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* total count pill */
+.notice-total-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 18px 28px;
+    text-align: center; flex-shrink: 0;
+    backdrop-filter: blur(8px);
+}
+.notice-total-pill .nt-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 700;
+    color: #fff; line-height: 1; display: block;
+}
+.notice-total-pill .nt-lbl {
+    font-size: 0.6rem; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,0.35);
+    display: block; margin-top: 5px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── FILTER TABS ─────────────────────────── */
+.notice-tabs-bar {
+    background: #fff;
+    border-bottom: 1px solid #e4e9f0;
+    position: sticky; top: 72px; z-index: 99;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+}
+.notice-tabs-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 28px;
+    display: flex; gap: 2px;
+    overflow-x: auto; scrollbar-width: none;
+}
+.notice-tabs-inner::-webkit-scrollbar { display: none; }
+
+.ntab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 13px 18px;
+    border: none; background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.77rem; font-weight: 600;
+    color: #8a96a3; text-transform: uppercase;
+    letter-spacing: 0.8px; cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2.5px solid transparent;
+    transition: all 0.2s;
+}
+.ntab:hover { color: #0a1628; }
+.ntab.active { color: #0a1628; border-bottom-color: #0a1628; }
+
+.ntab-count {
+    background: #eef1f6; color: #8a96a3;
+    font-size: 0.6rem; padding: 2px 7px;
+    border-radius: 20px; font-weight: 700;
+    transition: all 0.2s;
+}
+.ntab.active .ntab-count { background: #0a1628; color: #fff; }
+
+/* ── MAIN CONTENT ────────────────────────── */
+.notice-main {
+    max-width: 1100px; margin: 0 auto;
+    padding: 48px 28px 80px;
+}
+
+/* top row */
+.notice-top-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px; gap: 12px; flex-wrap: wrap;
+}
+.notice-result-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; color: #8a96a3;
+}
+.notice-result-text strong { color: #0a1628; }
+
+/* ── NOTICE CARD LIST ────────────────────── */
+.notice-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* individual notice card */
+.n-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8edf4;
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    align-items: center;
+    gap: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(10,22,40,0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+    cursor: pointer;
+
+    opacity: 0;
+    transform: translateY(14px);
+    animation: nCardIn 0.45s ease forwards;
+}
+
+.n-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 36px rgba(10,22,40,0.11);
+    border-color: #c8d4e4;
+}
+
+@keyframes nCardIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+.n-card:nth-child(1)  { animation-delay: 0.04s; }
+.n-card:nth-child(2)  { animation-delay: 0.08s; }
+.n-card:nth-child(3)  { animation-delay: 0.12s; }
+.n-card:nth-child(4)  { animation-delay: 0.16s; }
+.n-card:nth-child(5)  { animation-delay: 0.20s; }
+.n-card:nth-child(6)  { animation-delay: 0.24s; }
+.n-card:nth-child(7)  { animation-delay: 0.28s; }
+.n-card:nth-child(8)  { animation-delay: 0.32s; }
+
+/* left date column */
+.n-date-col {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px 0;
+    background: #f7f9fc;
+    border-right: 1px solid #edf1f7;
+    height: 100%;
+    min-height: 90px;
+}
+.n-day {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 700;
+    color: #0a1628; line-height: 1;
+}
+.n-month {
+    font-size: 0.6rem; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #8a96a3;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600; margin-top: 3px;
+}
+.n-year {
+    font-size: 0.58rem; color: #b0bac8;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1px;
+}
+
+/* middle content */
+.n-content {
+    padding: 18px 22px;
+    display: flex; flex-direction: column; gap: 6px;
+}
+
+.n-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.6rem; text-transform: uppercase;
+    letter-spacing: 1.2px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    width: fit-content;
+    background: rgba(10,22,40,0.07); color: #0a1628;
+}
+/* category colours */
+.n-tag.cat-exam    { background: rgba(59,130,246,0.1);  color: #2563eb; }
+.n-tag.cat-event   { background: rgba(34,197,94,0.1);   color: #16a34a; }
+.n-tag.cat-holiday { background: rgba(249,115,22,0.1);  color: #ea580c; }
+.n-tag.cat-result  { background: rgba(168,85,247,0.1);  color: #9333ea; }
+.n-tag.cat-general { background: rgba(10,22,40,0.07);   color: #475569; }
+
+.n-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700;
+    color: #0a1628; line-height: 1.35;
+    margin: 0;
+}
+
+.n-excerpt {
+    font-size: 0.8rem; color: #7a8a9e;
+    line-height: 1.55; margin: 0;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* right action */
+.n-action {
+    padding: 18px 22px 18px 0;
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 10px;
+    flex-shrink: 0;
+}
+
+.n-read-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #0a1628; color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 9px 16px; border-radius: 9px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+}
+.n-read-btn:hover {
+    background: #122040; color: #fff;
+    transform: scale(1.03);
+}
+.n-read-btn i { font-size: 0.7rem; }
+
+/* new badge */
+.n-new-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.58rem; text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 800;
+    background: #16a34a; color: #fff;
+    padding: 3px 8px; border-radius: 6px;
+}
+
+/* expand panel (read more inline) */
+.n-card.expanded { border-color: #0a1628; }
+.n-expand-body {
+    display: none;
+    grid-column: 1 / -1;
+    padding: 0 22px 22px 116px;
+    border-top: 1px solid #edf1f7;
+}
+.n-card.expanded .n-expand-body { display: block; }
+.n-expand-body p {
+    font-size: 0.85rem; color: #4a5568;
+    line-height: 1.75; margin: 16px 0 0;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── EMPTY STATE ─────────────────────────── */
+.n-empty {
+    text-align: center; padding: 80px 24px;
+    background: #fff; border-radius: 16px;
+    border: 1px dashed #d0d8e4;
+}
+.n-empty-icon { font-size: 3rem; color: #c8d4e0; margin-bottom: 16px; }
+.n-empty h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; color: #0a1628; margin-bottom: 8px;
+}
+.n-empty p { font-size: 0.85rem; color: #8a96a3; margin: 0; }
+
+/* ── BACK LINK ───────────────────────────── */
+.notice-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    color: #5a7a9a; text-decoration: none;
+    margin-top: 32px; transition: color 0.2s, gap 0.2s;
+}
+.notice-back:hover { color: #0a1628; gap: 12px; }
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 700px) {
+    .notice-total-pill { display: none; }
+    .n-card { grid-template-columns: 60px 1fr; }
+    .n-action { display: none; }
+    .n-expand-body { padding-left: 82px; }
+    .n-card { cursor: pointer; }
+    /* tap card to expand on mobile */
+}
+@media (max-width: 480px) {
+    .n-card { grid-template-columns: 1fr; }
+    .n-date-col {
+        flex-direction: row; gap: 6px;
+        padding: 12px 18px;
+        border-right: none;
+        border-bottom: 1px solid #edf1f7;
+        height: auto; min-height: unset;
+        justify-content: flex-start;
+    }
+    .n-day { font-size: 1rem; }
+    .n-expand-body { padding-left: 18px; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="fw-bold text-primary">Official Notice Board</h1>
-                <span class="badge bg-secondary">{{ notices.count }} Total Notices</span>
-            </div>
+<div class="notice-page">
 
-            <div class="card shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th style="width: 20%;">Date</th>
-                                    <th>Subject</th>
-                                    <th style="width: 15%;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for notice in notices %}
-                                <tr>
-                                    <td class="text-muted">{{ notice.date_posted|date:"M d, Y" }}</td>
-                                    <td>
-                                        <h6 class="mb-0 fw-bold">{{ notice.title }}</h6>
-                                        <small class="text-muted">{{ notice.content|truncatewords:15 }}</small>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary">Read More</button>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="3" class="text-center py-4">No notices have been posted yet.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+
+<div class="notice-hero">
+    <div class="notice-hero-inner">
+        <div>
+            <div class="notice-breadcrumb">
+                <a href="{% url 'home' %}">Home</a>
+                <i class="bi bi-chevron-right" style="font-size:.55rem;"></i>
+                <span>Notices</span>
             </div>
-            
-            <div class="mt-4">
-                <a href="{% url 'home' %}" class="btn btn-link text-decoration-none">← Back to Home</a>
-            </div>
+            <h1>Official <span>Notice Board</span></h1>
+            <p class="notice-hero-sub">
+                Stay informed with the latest announcements, academic updates,
+                and important communications from Siddhartha Secondary School.
+            </p>
+        </div>
+
+        <div class="notice-total-pill">
+            <span class="nt-num">{{ notices.count }}</span>
+            <span class="nt-lbl">Total Notices</span>
         </div>
     </div>
 </div>
+
+
+<div class="notice-tabs-bar">
+    <div class="notice-tabs-inner">
+        <button class="ntab active" data-cat="all">
+            All <span class="ntab-count">{{ notices.count }}</span>
+        </button>
+        {# Add more tabs if your Notice model has a category field #}
+        
+        <button class="ntab" data-cat="exam">
+            Exam <span class="ntab-count">{{ exam_count }}</span>
+        </button>
+        
+    </div>
+</div>
+
+
+<div class="notice-main">
+
+    <div class="notice-top-row">
+        <p class="notice-result-text">
+            Showing <strong id="nVisible">{{ notices.count }}</strong>
+            notice{{ notices.count|pluralize }}
+        </p>
+    </div>
+
+    <div class="notice-list" id="noticeList">
+
+        {% for notice in notices %}
+
+        {# ── DETERMINE IF NOTICE IS "NEW" (within 7 days) ── #}
+        {% now "Y-m-d" as today_str %}
+
+        <div class="n-card"
+             data-cat="{{ notice.category|default:'general'|lower }}"
+             data-id="{{ forloop.counter }}">
+
+            {# Date column #}
+            <div class="n-date-col">
+                <span class="n-day">{{ notice.date_posted|date:"d" }}</span>
+                <span class="n-month">{{ notice.date_posted|date:"M" }}</span>
+                <span class="n-year">{{ notice.date_posted|date:"Y" }}</span>
+            </div>
+
+            {# Content #}
+            <div class="n-content">
+                {# Category tag — adjust field name if yours is different #}
+                <span class="n-tag cat-{{ notice.category|default:'general'|lower }}">
+                    <i class="bi bi-tag-fill" style="font-size:.55rem;"></i>
+                    {{ notice.category|default:"General" }}
+                </span>
+
+                <h3 class="n-title">{{ notice.title }}</h3>
+                <p class="n-excerpt">{{ notice.content|truncatewords:20 }}</p>
+            </div>
+
+            {# Action #}
+            <div class="n-action">
+                {# Show NEW badge if notice is recent — within 7 days #}
+                {% if notice.date_posted|timesince|slice:":1" == "0" or "day" in notice.date_posted|timesince and notice.date_posted|timesince|slice:":2"|add:"0" < "8" %}
+                <span class="n-new-badge">
+                    <i class="bi bi-star-fill" style="font-size:.5rem;"></i> New
+                </span>
+                {% endif %}
+                <button class="n-read-btn" onclick="toggleNotice({{ forloop.counter }})">
+                    Read More <i class="bi bi-chevron-down"></i>
+                </button>
+            </div>
+
+            {# Expandable full content #}
+            <div class="n-expand-body" id="n-body-{{ forloop.counter }}">
+                <p>{{ notice.content }}</p>
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="n-empty">
+            <div class="n-empty-icon"><i class="bi bi-clipboard-x"></i></div>
+            <h3>No Notices Posted Yet</h3>
+            <p>Check back later for announcements and updates from the school.</p>
+        </div>
+
+        {% endfor %}
+
+    </div>{# end notice-list #}
+
+    <a href="{% url 'home' %}" class="notice-back">
+        <i class="bi bi-arrow-left"></i> Back to Home
+    </a>
+
+</div>{# end notice-main #}
+</div>{# end notice-page #}
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* Toggle expand/collapse on a notice card */
+function toggleNotice(id) {
+    const card = document.querySelector(`.n-card[data-id="${id}"]`);
+    const body = document.getElementById(`n-body-${id}`);
+    const btn  = card.querySelector('.n-read-btn');
+    const icon = btn.querySelector('i');
+
+    const isOpen = card.classList.contains('expanded');
+
+    // Close all others first
+    document.querySelectorAll('.n-card.expanded').forEach(c => {
+        c.classList.remove('expanded');
+        c.querySelector('.n-read-btn').innerHTML = 'Read More <i class="bi bi-chevron-down"></i>';
+    });
+
+    if (!isOpen) {
+        card.classList.add('expanded');
+        btn.innerHTML = 'Close <i class="bi bi-chevron-up"></i>';
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+/* Category tab filtering */
+document.querySelectorAll('.ntab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.ntab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cat = btn.dataset.cat;
+        let visible = 0;
+
+        document.querySelectorAll('.n-card').forEach(card => {
+            const match = cat === 'all' || card.dataset.cat === cat;
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+
+        document.getElementById('nVisible').textContent = visible;
+    });
+});
+
+/* Mobile: tap anywhere on card to expand */
+document.querySelectorAll('.n-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        if (window.innerWidth > 700) return; // desktop uses button
+        if (e.target.closest('.n-read-btn')) return;
+        const id = card.dataset.id;
+        toggleNotice(id);
+    });
+});
+</script>
 {% endblock %}

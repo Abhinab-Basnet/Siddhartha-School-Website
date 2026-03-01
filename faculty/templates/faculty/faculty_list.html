@@ -1,28 +1,787 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* =============================================
+   FACULTY PAGE
+   Primary: Navy blue — clean, professional
+   Accents: Soft slate, warm white, subtle gold
+============================================= */
+
+.fac-page {
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* ── HERO BANNER ─────────────────────── */
+.fac-hero {
+    background: linear-gradient(135deg, #0a1628 0%, #122040 60%, #1a3060 100%);
+    padding: 70px 0 56px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* subtle dot-grid texture */
+.fac-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+.fac-hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent);
+}
+
+.fac-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.fac-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: rgba(255,255,255,0.38);
+    margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.fac-breadcrumb a { color: rgba(255,255,255,0.38); text-decoration: none; transition: color 0.2s; }
+.fac-breadcrumb a:hover { color: rgba(255,255,255,0.7); }
+.fac-breadcrumb .sep { font-size: 0.55rem; }
+
+.fac-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    letter-spacing: -0.5px;
+}
+
+.fac-hero h1 span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,0.35);
+}
+
+.fac-hero-sub {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.45);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    max-width: 420px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* stat pills on right */
+.fac-hero-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fac-stat-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px 24px;
+    text-align: center;
+    min-width: 90px;
+    backdrop-filter: blur(8px);
+}
+
+.fac-stat-pill .sn {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+
+.fac-stat-pill .sl {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.38);
+    display: block;
+    margin-top: 4px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── FILTER BAR ──────────────────────── */
+.fac-filter-bar {
+    background: #fff;
+    border-bottom: 1px solid #e8ecf0;
+    position: sticky;
+    top: 72px;
+    z-index: 99;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+}
+
+.fac-filter-inner {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.fac-filter-inner::-webkit-scrollbar { display: none; }
+
+.fac-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 18px;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #8a96a3;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2.5px solid transparent;
+    transition: all 0.2s;
+}
+
+.fac-filter-btn:hover { color: #0a1628; }
+
+.fac-filter-btn.active {
+    color: #0a1628;
+    border-bottom-color: #0a1628;
+}
+
+.fac-filter-count {
+    background: #eef1f5;
+    color: #8a96a3;
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.fac-filter-btn.active .fac-filter-count {
+    background: #0a1628;
+    color: #fff;
+}
+
+
+
+/* ── MAIN GRID ───────────────────────── */
+.fac-main {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 52px 28px 80px;
+}
+
+/* count + sort row */
+.fac-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.fac-count-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: #8a96a3;
+}
+
+.fac-count-text strong { color: #0a1628; }
+
+.fac-view-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.fac-view-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid #e0e6ec;
+    background: #fff;
+    color: #b0bac4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fac-view-btn.active, .fac-view-btn:hover {
+    background: #0a1628;
+    color: #fff;
+    border-color: #0a1628;
+}
+
+/* ── CARD GRID ───────────────────────── */
+.fac-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* ── CARD ────────────────────────────── */
+.fac-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(10,22,40,0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    transform: translateY(20px);
+    animation: cardIn 0.5s ease forwards;
+}
+
+.fac-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(10,22,40,0.14);
+}
+
+@keyframes cardIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* stagger cards */
+.fac-card:nth-child(1)  { animation-delay: 0.05s; }
+.fac-card:nth-child(2)  { animation-delay: 0.1s;  }
+.fac-card:nth-child(3)  { animation-delay: 0.15s; }
+.fac-card:nth-child(4)  { animation-delay: 0.2s;  }
+.fac-card:nth-child(5)  { animation-delay: 0.25s; }
+.fac-card:nth-child(6)  { animation-delay: 0.3s;  }
+.fac-card:nth-child(7)  { animation-delay: 0.35s; }
+.fac-card:nth-child(8)  { animation-delay: 0.4s;  }
+.fac-card:nth-child(9)  { animation-delay: 0.45s; }
+
+/* photo area */
+.fac-photo-wrap {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+    background: #eef1f5;
+}
+
+.fac-photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.fac-card:hover .fac-photo-wrap img {
+    transform: scale(1.06);
+}
+
+/* photo fallback initials avatar */
+.fac-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #122040, #1e3a6e);
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+}
+
+/* dept label — top left */
+.fac-dept-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(10,22,40,0.75);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* hover overlay with quick actions */
+.fac-hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,22,40,0.85) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: flex-end;
+    padding: 18px;
+    gap: 8px;
+}
+
+.fac-card:hover .fac-hover-overlay { opacity: 1; }
+
+.fac-quick-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: 9px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.fac-quick-btn:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+}
+
+.fac-quick-btn.primary-btn {
+    background: #fff;
+    color: #0a1628;
+    border-color: #fff;
+}
+
+.fac-quick-btn.primary-btn:hover {
+    background: rgba(255,255,255,0.9);
+    color: #0a1628;
+}
+
+/* card body */
+.fac-card-body {
+    padding: 20px 22px 22px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.fac-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0a1628;
+    margin: 0 0 4px;
+    line-height: 1.3;
+}
+
+.fac-designation {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #5a7a9a;
+    font-weight: 500;
+    margin: 0 0 14px;
+}
+
+.fac-divider {
+    height: 1px;
+    background: linear-gradient(to right, #e0e6ec, transparent);
+    margin-bottom: 14px;
+}
+
+.fac-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 16px;
+}
+
+.fac-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.77rem;
+    color: #7a8a9a;
+}
+
+.fac-meta-row i {
+    width: 16px;
+    color: #b0bac4;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.fac-meta-row a {
+    color: #7a8a9a;
+    text-decoration: none;
+    transition: color 0.2s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+
+.fac-meta-row a:hover { color: #0a1628; }
+
+/* card footer — view profile btn */
+.fac-card-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #eef1f5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fac-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.77rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #0a1628;
+    text-decoration: none;
+    transition: gap 0.2s;
+}
+
+.fac-profile-btn:hover { gap: 11px; color: #0a1628; }
+.fac-profile-btn i { font-size: 0.7rem; }
+
+/* speciality dots */
+.fac-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.fac-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #e0e6ec;
+}
+
+.fac-dot.active { background: #0a1628; }
+
+/* ── EMPTY STATE ─────────────────────── */
+.fac-empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: #8a96a3;
+}
+
+.fac-empty-icon {
+    font-size: 3.5rem;
+    color: #d0d8e0;
+    margin-bottom: 20px;
+}
+
+.fac-empty h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: #0a1628;
+    margin-bottom: 8px;
+}
+
+.fac-empty p { font-size: 0.88rem; }
+
+/* ── LIST VIEW (toggle) ──────────────── */
+.fac-grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.fac-grid.list-view .fac-card {
+    flex-direction: row;
+    border-radius: 14px;
+}
+
+.fac-grid.list-view .fac-photo-wrap {
+    width: 100px;
+    height: auto;
+    min-height: 110px;
+    flex-shrink: 0;
+    border-radius: 0;
+}
+
+.fac-grid.list-view .fac-hover-overlay { display: none; }
+.fac-grid.list-view .fac-dept-badge { top: 8px; left: 8px; font-size: 0.55rem; }
+.fac-grid.list-view .fac-card-body { flex-direction: row; align-items: center; gap: 24px; padding: 16px 22px; }
+.fac-grid.list-view .fac-name { font-size: 0.95rem; margin-bottom: 2px; }
+.fac-grid.list-view .fac-designation { margin-bottom: 0; }
+.fac-grid.list-view .fac-divider { display: none; }
+.fac-grid.list-view .fac-meta { flex-direction: row; gap: 20px; margin-bottom: 0; flex-wrap: wrap; }
+.fac-grid.list-view .fac-card-footer { border: none; padding: 0; margin-left: auto; flex-shrink: 0; }
+.fac-grid.list-view .fac-dots { display: none; }
+
+/* ── RESPONSIVE ──────────────────────── */
+@media (max-width: 900px) {
+    .fac-hero-stats { display: none; }
+    .fac-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .fac-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fac-photo-wrap { height: 180px; }
+    .fac-hero { padding: 48px 0 40px; }
+    .fac-main { padding: 36px 16px 60px; }
+    .fac-grid.list-view { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5">Our Distinguished Faculty</h1>
-    
-    <div class="row">
-        {% for teacher in teachers %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <img src="{{ teacher.image.url }}" class="card-img-top" alt="{{ teacher.name }}" style="height: 300px; object-fit: cover;">
-                
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">{{ teacher.name }}</h5>
-                    <p class="text-muted mb-1">{{ teacher.designation }}</p>
-                    <p class="badge bg-primary">{{ teacher.department }}</p>
-                    <hr>
-                    <p class="small text-muted">{{ teacher.email }}</p>
-                    <a href="#" class="btn btn-outline-dark btn-sm">View Profile</a>
-                </div>
+<div class="fac-page">
+
+<!-- ══════════════════════════════════════
+     HERO BANNER
+══════════════════════════════════════ -->
+<div class="fac-hero">
+    <div class="fac-hero-inner">
+        <div>
+            <div class="fac-breadcrumb">
+                <a href="/">Home</a>
+                <i class="bi bi-chevron-right sep"></i>
+                <span>Faculty</span>
+            </div>
+            <h1>Our Distinguished <span>Faculty</span></h1>
+            <p class="fac-hero-sub">
+                Dedicated educators shaping tomorrow's leaders through knowledge, mentorship, and passion for excellence.
+            </p>
+        </div>
+
+        <div class="fac-hero-stats">
+            <div class="fac-stat-pill">
+                <span class="sn">{{ teachers|length }}</span>
+                <span class="sl">Faculty</span>
+            </div>
+            {% regroup teachers by department as dept_groups_count %}
+            <div class="fac-stat-pill">
+                <span class="sn">{{ dept_groups_count|length }}</span>
+                <span class="sl">Departments</span>
             </div>
         </div>
-        {% empty %}
-        <p class="text-center">No faculty members found.</p>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FILTER + SEARCH BAR
+══════════════════════════════════════ -->
+<div class="fac-filter-bar">
+    <div class="fac-filter-inner">
+        <button class="fac-filter-btn active" data-dept="all">
+            All <span class="fac-filter-count" id="count-all">{{ teachers|length }}</span>
+        </button>
+
+        {# Dynamically build department filter buttons #}
+        {% regroup teachers by department as dept_groups %}
+        {% for dept in dept_groups %}
+        <button class="fac-filter-btn" data-dept="{{ dept.grouper }}">
+            {{ dept.grouper }}
+            <span class="fac-filter-count">{{ dept.list|length }}</span>
+        </button>
         {% endfor %}
     </div>
 </div>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+<div class="fac-main">
+
+    <!-- top row: count + view toggle -->
+    <div class="fac-top-row">
+        <p class="fac-count-text">
+            Showing <strong id="visibleCount">{{ teachers|length }}</strong>
+            of <strong>{{ teachers|length }}</strong> faculty members
+        </p>
+        <div class="fac-view-toggle">
+            <button class="fac-view-btn active" id="gridViewBtn" title="Grid view">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </button>
+            <button class="fac-view-btn" id="listViewBtn" title="List view">
+                <i class="bi bi-list-ul"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── CARD GRID ── -->
+    <div class="fac-grid" id="facGrid">
+
+        {% for teacher in teachers %}
+        <div class="fac-card" data-dept="{{ teacher.department }}" data-name="{{ teacher.name|lower }}">
+
+            <!-- Photo -->
+            <div class="fac-photo-wrap">
+                {% if teacher.image %}
+                    <img src="{{ teacher.image.url }}" alt="{{ teacher.name }}" loading="lazy">
+                {% else %}
+                    <div class="fac-avatar-fallback">
+                        {{ teacher.name|slice:":2"|upper }}
+                    </div>
+                {% endif %}
+
+                <!-- Department badge -->
+                <div class="fac-dept-badge">{{ teacher.department }}</div>
+
+                <!-- Hover overlay with actions -->
+                <div class="fac-hover-overlay">
+                    <a href="mailto:{{ teacher.email }}" class="fac-quick-btn">
+                        <i class="bi bi-envelope"></i> Email
+                    </a>
+                    <a href="#" class="fac-quick-btn primary-btn">
+                        <i class="bi bi-person"></i> Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="fac-card-body">
+                <h3 class="fac-name">{{ teacher.name }}</h3>
+                <p class="fac-designation">{{ teacher.designation }}</p>
+
+                <div class="fac-divider"></div>
+
+                <div class="fac-meta">
+                    <div class="fac-meta-row">
+                        <i class="bi bi-envelope"></i>
+                        <a href="mailto:{{ teacher.email }}" title="{{ teacher.email }}">
+                            {{ teacher.email }}
+                        </a>
+                    </div>
+                    {% if teacher.phone %}
+                    <div class="fac-meta-row">
+                        <i class="bi bi-telephone"></i>
+                        <span>{{ teacher.phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if teacher.qualification %}
+                    <div class="fac-meta-row">
+                        <i class="bi bi-mortarboard"></i>
+                        <span>{{ teacher.qualification }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Footer -->
+                <div class="fac-card-footer">
+                    <a href="mailto:{{ teacher.email }}" class="fac-profile-btn">
+                        Send Email <i class="bi bi-envelope"></i>
+                    </a>
+                    <div class="fac-dots">
+                        <div class="fac-dot active"></div>
+                        <div class="fac-dot active"></div>
+                        <div class="fac-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% empty %}
+
+        <!-- Empty state -->
+        <div class="fac-empty" style="grid-column: 1/-1;">
+            <div class="fac-empty-icon"><i class="bi bi-people"></i></div>
+            <h3>No Faculty Members Found</h3>
+            <p>Faculty information will appear here once added to the system.</p>
+        </div>
+
+        {% endfor %}
+
+    </div>{# end grid #}
+
+</div>{# end main #}
+</div>{# end page #}
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const cards        = document.querySelectorAll('.fac-card');
+    const filterBtns   = document.querySelectorAll('.fac-filter-btn');
+    const visibleCount = document.getElementById('visibleCount');
+    const grid         = document.getElementById('facGrid');
+    const gridViewBtn  = document.getElementById('gridViewBtn');
+    const listViewBtn  = document.getElementById('listViewBtn');
+
+    let activeDept = 'all';
+
+    /* ── Filter logic ── */
+    function applyFilters() {
+        let visible = 0;
+        cards.forEach(card => {
+            const show = activeDept === 'all' || card.dataset.dept === activeDept;
+            card.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        visibleCount.textContent = visible;
+    }
+
+    /* Department filter buttons */
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeDept = btn.dataset.dept;
+            applyFilters();
+        });
+    });
+
+    /* ── Grid / List toggle ── */
+    gridViewBtn.addEventListener('click', () => {
+        grid.classList.remove('list-view');
+        gridViewBtn.classList.add('active');
+        listViewBtn.classList.remove('active');
+    });
+
+    listViewBtn.addEventListener('click', () => {
+        grid.classList.add('list-view');
+        listViewBtn.classList.add('active');
+        gridViewBtn.classList.remove('active');
+    });
+
+});
+</script>
 {% endblock %}

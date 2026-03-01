@@ -3,51 +3,812 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Name | Official Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Siddhartha Secondary School | Excellence in Education</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <style>
-        .navbar { background-color: #003366; } /* Professional Dark Blue */
-        .nav-link { color: white !important; }
-        .footer { background: #222; color: white; padding: 40px 0; margin-top: 50px; }
+        :root {
+            --navy:    #0a1628;
+            --navy-2:  #122040;
+            --gold:    #c9a84c;
+            --gold-lt: #e8c96e;
+            --cream:   #faf7f0;
+            --text:    #1e2a3a;
+            --muted:   #6b7a8d;
+            --white:   #ffffff;
+            --border:  rgba(201,168,76,0.25);
+            --shadow:  0 8px 40px rgba(10,22,40,0.12);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ──────────────────────────────────────────
+           TOP BAR
+        ────────────────────────────────────────── */
+        .top-bar {
+            background: var(--navy);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.78rem;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(201,168,76,0.2);
+        }
+
+        .top-bar a { color: var(--gold-lt); text-decoration: none; }
+        .top-bar a:hover { color: var(--white); }
+
+        .top-bar .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .top-bar .contact-info { display: flex; gap: 20px; flex-wrap: wrap; }
+        .top-bar .social-links { display: flex; gap: 12px; }
+        .top-bar .social-links a { font-size: 0.85rem; }
+
+        /* ──────────────────────────────────────────
+           NAVBAR
+        ────────────────────────────────────────── */
+        .navbar-wrapper {
+            background: var(--navy-2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .navbar-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        /* Brand */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .brand-logo {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--navy);
+            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+            box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+            /* Replace with <img> tag for actual logo */
+        }
+
+        .brand-text { line-height: 1.15; }
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.3px;
+            display: block;
+        }
+        .brand-tagline {
+            font-size: 0.65rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        /* Nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            gap: 2px;
+        }
+
+        .nav-links .nav-item { position: relative; padding-bottom: 8px; }
+
+        .nav-links .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .nav-links .nav-link:hover,
+        .nav-links .nav-item:hover > .nav-link {
+            color: var(--gold-lt);
+            background: rgba(201,168,76,0.1);
+        }
+
+        .nav-links .nav-link .arrow {
+            font-size: 0.6rem;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:hover .arrow { transform: rotate(180deg); }
+
+        /* Dropdown */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%%;
+            left: 0;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            min-width: 200px;
+            padding: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+            pointer-events: none;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.83rem;
+            padding: 8px 14px;
+            border-radius: 7px;
+            transition: all 0.15s;
+            font-weight: 400;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--cream);
+            color: var(--navy);
+            padding-left: 18px;
+        }
+
+        .dropdown-menu .menu-section-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            font-weight: 600;
+            padding: 10px 14px 4px;
+        }
+
+        .dropdown-menu hr {
+            border-color: var(--border);
+            margin: 6px 0;
+        }
+
+        /* Mega Menu */
+        .mega-dropdown { position: static !important; }
+
+        .mega-menu {
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            width: min(900px, 95vw);
+            padding: 28px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .nav-item:hover .mega-menu {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .mega-col .col-title {
+            font-size: 0.67rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            background: none;
+            border: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--white);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.open span:nth-child(1) { transform: rotate(45deg) translateY(7px); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translateY(-7px); }
+
+        /* Mobile nav */
+        .mobile-nav {
+            display: none;
+            background: var(--navy);
+            padding: 16px 24px 24px;
+            border-top: 1px solid var(--border);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .mobile-nav.open { max-height: 600px; overflow-y: auto; }
+
+        .mobile-nav a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .mobile-nav a:hover { color: var(--gold-lt); }
+
+        .mobile-section-title {
+            color: var(--gold);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 16px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        /* ──────────────────────────────────────────
+           MAIN CONTENT
+        ────────────────────────────────────────── */
+        main { min-height: 60vh; }
+
+        /* ──────────────────────────────────────────
+           FOOTER
+        ────────────────────────────────────────── */
+        footer {
+            background: var(--navy);
+            color: rgba(255,255,255,0.65);
+            margin-top: 80px;
+        }
+
+        .footer-top {
+            padding: 70px 0 50px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .footer-grid {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.2fr;
+            gap: 48px;
+        }
+
+        .footer-brand .brand-name { font-size: 1.3rem; margin-bottom: 4px; }
+        .footer-brand .brand-tagline { display: block; margin-bottom: 16px; }
+
+        .footer-brand p {
+            font-size: 0.85rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .footer-socials { display: flex; gap: 10px; }
+
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(201,168,76,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .social-btn:hover {
+            background: var(--gold);
+            color: var(--navy);
+            border-color: var(--gold);
+        }
+
+        .footer-col h5 {
+            color: var(--white);
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .footer-col ul { list-style: none; }
+
+        .footer-col ul li { margin-bottom: 10px; }
+
+        .footer-col ul li a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-col ul li a::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .footer-col ul li a:hover { color: var(--gold-lt); padding-left: 6px; }
+        .footer-col ul li a:hover::before { opacity: 1; }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: 0.85rem;
+        }
+
+        .contact-item i {
+            color: var(--gold);
+            font-size: 1rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            padding: 20px 0;
+        }
+
+        .footer-bottom .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.8rem;
+        }
+
+        .footer-bottom a { color: var(--gold); text-decoration: none; }
+
+        /* ──────────────────────────────────────────
+           UTILITY CLASSES
+        ────────────────────────────────────────── */
+        .container-xl {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-label::before, .section-label::after {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: var(--gold);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.2;
+        }
+
+        .section-title span { color: var(--gold); }
+
+        .btn-gold {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+            color: var(--navy);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 13px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(201,168,76,0.45);
+            color: var(--navy);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--navy);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            border: 2px solid var(--navy);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .btn-outline-gold {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-outline-gold:hover {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        /* ──────────────────────────────────────────
+           RESPONSIVE
+        ────────────────────────────────────────── */
+        @media (max-width: 1024px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .mobile-nav { display: block; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
+
+        @media (max-width: 640px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+            .top-bar .social-links { display: none; }
+        }
+
+        /* ──────────────────────────────────────────
+           SCROLL ANIMATIONS
+        ────────────────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <!-- TOP BAR -->
+    <div class="top-bar">
         <div class="container">
-            <a class="navbar-brand text-white fw-bold" href="#">SCHOOL LOGO</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Academics</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Curriculum</a></li>
-                            <li><a class="dropdown-item" href="{% url 'dept_list' %}">Department</a></li>
-                            <li><a class="dropdown-item" href="{% url 'event_list' %}">Calendar</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'faculty_list' %}">Faculty</a></li>
-                     <li class="nav-item"><a class="nav-link" href="{% url 'notice_list' %}">Notices</a></li>
-                     <li class="nav-item"><a class="nav-link" href="{% url 'album_list' %}">Gallery</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
-                </ul>
+            <div class="contact-info">
+                <span><i class="bi bi-telephone me-1"></i> 021-425850</span>
+                <span><i class="bi bi-envelope me-1"></i> siddharthass51@gmail.com</span>
+                <span><i class="bi bi-geo-alt me-1"></i> Sundar-Haraincha, Koshi, Nepal</span>
+            </div>
+            <div class="social-links">
+                <a href="#" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" title="YouTube"><i class="bi bi-youtube"></i></a>
+                <a href="#" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" title="Twitter / X"><i class="bi bi-twitter-x"></i></a>
             </div>
         </div>
-    </nav>
+    </div>
 
-    {% block content %}
-    {% endblock %}
+    <!-- NAVBAR -->
+    <div class="navbar-wrapper">
+        <div class="navbar-inner">
 
-    <footer class="footer mt-auto">
-        <div class="container text-center">
-            <p>&copy; 2026 Your School Name. All Rights Reserved.</p>
+            <!-- Brand -->
+            <a class="brand" href="/">
+                <div class="brand-logo">
+                    <!-- Replace inner content with <img src="..." alt="Logo"> -->
+                    S
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Siddhartha Secondary School</span>
+                    <span class="brand-tagline">Excellence · Integrity · Service</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav -->
+            <ul class="nav-links">
+
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+
+                <!-- About — MEGA -->
+                <li class="nav-item mega-dropdown">
+                    <a class="nav-link" href="#">About Us <i class="bi bi-chevron-down arrow"></i></a>
+                    <div class="dropdown-menu mega-menu">
+                        <div class="mega-col">
+                            <div class="col-title">About</div>
+                            <a href="{% url 'about_introduction' %}">Introduction</a>
+                            <a href="#">Leadership Team</a>
+                            <a href="#">Vision & Mission</a>
+                            <a href="#">Student Handbook</a>
+                        </div>
+                        <div class="mega-col">
+                            <div class="col-title">School Identity</div>
+                            <a href="#">School Anthem</a>
+                            <a href="#">School Motto</a>
+                            <a href="#">Crest & Colours</a>
+                            <a href="#">History & Legacy</a>
+                        </div>
+                        <div class="mega-col">
+                            <div class="col-title">Foundation</div>
+                            <a href="#">Our Values</a>
+                            <a href="#">Community Outreach</a>
+                            <a href="#">Achievements</a>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Academics -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Academics <i class="bi bi-chevron-down arrow"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="#">Curriculum</a>
+                        <a href="{% url 'dept_list' %}">Departments</a>
+                        <a href="{% url 'event_list' %}">Academic Calendar</a>
+                        <a href="#">Examinations</a>
+                        <a href="#">Results & Reports</a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faculty_list' %}">Faculty</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Admissions</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'notice_list' %}">Notices</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'album_list' %}">Gallery</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+
+            </ul>
+
+            <!-- Hamburger -->
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Nav -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="/">Home</a>
+            <div class="mobile-section-title">About Us</div>
+            <a href="{% url 'about_introduction' %}" style="padding-left:12px;">Introduction</a>
+            <a href="#" style="padding-left:12px;">Leadership Team</a>
+            <a href="#" style="padding-left:12px;">Vision & Mission</a>
+            <div class="mobile-section-title">Academics</div>
+            <a href="#" style="padding-left:12px;">Curriculum</a>
+            <a href="{% url 'dept_list' %}" style="padding-left:12px;">Departments</a>
+            <a href="{% url 'event_list' %}" style="padding-left:12px;">Academic Calendar</a>
+            <a href="{% url 'faculty_list' %}">Faculty</a>
+            <a href="#">Admissions</a>
+            <a href="{% url 'notice_list' %}">Notices</a>
+            <a href="{% url 'album_list' %}">Gallery</a>
+            <a href="{% url 'contact' %}">Contact</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-top">
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+                    <span class="brand-name" style="font-family:'Playfair Display',serif;color:#fff;font-size:1.2rem;display:block;margin-bottom:4px;">Siddhartha Secondary School</span>
+                    <span class="brand-tagline" style="font-size:0.65rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:16px;">Excellence · Integrity · Service</span>
+                    <p>Nurturing young minds and shaping future leaders through quality education, strong values, and dedicated mentorship since our founding.</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-btn"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="{% url 'about_introduction' %}">About Us</a></li>
+                        <li><a href="{% url 'notice_list' %}">Latest Notices</a></li>
+                        <li><a href="{% url 'event_list' %}">Academic Calendar</a></li>
+                        <li><a href="{% url 'album_list' %}">Photo Gallery</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Academics</h5>
+                    <ul>
+                        <li><a href="#">Curriculum</a></li>
+                        <li><a href="{% url 'dept_list' %}">Departments</a></li>
+                        <li><a href="{% url 'faculty_list' %}">Faculty Directory</a></li>
+                        <li><a href="#">Examinations</a></li>
+                        <li><a href="#">Results</a></li>
+                        <li><a href="#">Admissions</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Contact Info</h5>
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Sundarharaincha, Koshi Province, Nepal</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <span>021-545850</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span>siddharthass51@gmail.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-clock-fill"></i>
+                        <span>Sun – Fri: 6:00 AM – 4:00 PM</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <span>&copy; 2026 Siddhartha Secondary School. All Rights Reserved.</span>
+                <span>Designed with <i class="bi bi-heart-fill" style="color:var(--gold);font-size:0.75rem;"></i> in Nepal</span>
+            </div>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hamburger toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            mobileNav.classList.toggle('open');
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(el => observer.observe(el));
+
+        // Sticky navbar shadow
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.navbar-wrapper');
+            nav.style.boxShadow = window.scrollY > 20
+                ? '0 4px 40px rgba(0,0,0,0.35)'
+                : '0 4px 30px rgba(0,0,0,0.25)';
+        });
+    </script>
+
 </body>
 </html>

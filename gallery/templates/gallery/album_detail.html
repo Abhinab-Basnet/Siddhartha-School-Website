@@ -1,45 +1,381 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   GALLERY — ALBUM DETAIL
+   Full-width masonry-style photo grid + lightbox
+============================================= */
+
+.adetail-page { background: #f2f5f9; min-height: 100vh; padding: 48px 0 80px; }
+.adetail-wrap { max-width: 1260px; margin: 0 auto; padding: 0 28px; }
+
+/* ── BREADCRUMB ── */
+.ad-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.72rem; text-transform: uppercase;
+    letter-spacing: 2px; font-family: 'DM Sans', sans-serif;
+    color: #8a96a3; margin-bottom: 28px; flex-wrap: wrap;
+}
+.ad-breadcrumb a { color: #5a7a9a; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+.ad-breadcrumb a:hover { color: #0a1628; }
+.ad-breadcrumb i { font-size: 0.55rem; color: #c8d0da; }
+
+/* ── ALBUM HEADER ── */
+.ad-header {
+    display: flex; align-items: flex-end;
+    justify-content: space-between; gap: 20px;
+    margin-bottom: 40px; flex-wrap: wrap;
+}
+
+.ad-header-left {}
+
+.ad-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.67rem; text-transform: uppercase;
+    letter-spacing: 2.5px; color: #5a7a9a;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 10px;
+}
+.ad-tag::before { content: ''; display: block; width: 16px; height: 1px; background: #b0bac8; }
+
+.ad-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    font-weight: 900; color: #0a1628;
+    line-height: 1.1; margin: 0 0 8px; letter-spacing: -0.3px;
+}
+
+.ad-header p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; color: #7a8a9e;
+    max-width: 480px; line-height: 1.6; margin: 0;
+}
+
+/* photo count pill */
+.ad-count-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: #0a1628; color: #fff;
+    border-radius: 50px; padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    white-space: nowrap; flex-shrink: 0;
+}
+.ad-count-pill i { font-size: 0.85rem; }
+
+/* ── PHOTO GRID ── */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+/* First photo spans 2 cols + 2 rows — feature shot */
+.photo-item {
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background: #dde4ee;
+    cursor: pointer;
+
+    opacity: 0; transform: scale(0.97);
+    animation: phIn 0.4s ease forwards;
+}
+@keyframes phIn { to { opacity: 1; transform: scale(1); } }
+.photo-item:nth-child(1)  { animation-delay: 0.04s; }
+.photo-item:nth-child(2)  { animation-delay: 0.08s; }
+.photo-item:nth-child(3)  { animation-delay: 0.12s; }
+.photo-item:nth-child(4)  { animation-delay: 0.16s; }
+.photo-item:nth-child(5)  { animation-delay: 0.20s; }
+.photo-item:nth-child(6)  { animation-delay: 0.24s; }
+.photo-item:nth-child(7)  { animation-delay: 0.28s; }
+.photo-item:nth-child(8)  { animation-delay: 0.32s; }
+.photo-item:nth-child(9)  { animation-delay: 0.36s; }
+.photo-item:nth-child(10) { animation-delay: 0.40s; }
+.photo-item:nth-child(11) { animation-delay: 0.44s; }
+.photo-item:nth-child(12) { animation-delay: 0.48s; }
+
+.photo-item:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.photo-item img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 0.45s ease;
+    min-height: 160px;
+}
+
+.photo-item:first-child img { min-height: 320px; }
+
+.photo-item:hover img { transform: scale(1.06); }
+
+/* overlay */
+.photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,22,40,0.65) 0%, transparent 55%);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; align-items: flex-end; padding: 14px;
+}
+.photo-item:hover .photo-overlay { opacity: 1; }
+
+.photo-caption-text {
+    color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; font-weight: 500; line-height: 1.4;
+}
+
+/* zoom icon */
+.photo-zoom {
+    position: absolute; top: 10px; right: 10px;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    color: #fff; display: flex; align-items: center;
+    justify-content: center; font-size: 0.75rem;
+    opacity: 0; transition: opacity 0.3s;
+}
+.photo-item:hover .photo-zoom { opacity: 1; }
+
+/* ── EMPTY STATE ── */
+.ad-empty {
+    grid-column: 1 / -1; text-align: center;
+    padding: 80px 24px; background: #fff;
+    border-radius: 16px; border: 1px dashed #d0d8e4;
+}
+.ad-empty i { font-size: 3rem; color: #c8d4e0; display: block; margin-bottom: 16px; }
+.ad-empty h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #0a1628; margin-bottom: 8px; }
+.ad-empty p { font-size: 0.85rem; color: #8a96a3; margin: 0; }
+
+/* ── BACK BUTTON ── */
+.ad-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    font-weight: 600; color: #5a7a9a; text-decoration: none;
+    margin-top: 36px; transition: color 0.2s, gap 0.2s;
+}
+.ad-back:hover { color: #0a1628; gap: 12px; }
+
+/* ══════════════════════════════════════════
+   LIGHTBOX
+══════════════════════════════════════════ */
+#lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    display: none; align-items: center; justify-content: center;
+}
+#lightbox.open { display: flex; }
+
+.lb-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(10,22,40,0.94);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+}
+
+.lb-content {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center; max-width: 90vw; max-height: 90vh;
+    gap: 12px;
+}
+
+.lb-img-wrap {
+    position: relative;
+    display: flex; align-items: center; gap: 16px;
+}
+
+.lb-img {
+    max-width: 82vw; max-height: 76vh;
+    object-fit: contain; border-radius: 12px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    display: block;
+    transition: opacity 0.2s;
+}
+
+.lb-btn {
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: #fff; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: all 0.2s; backdrop-filter: blur(4px);
+}
+.lb-btn:hover { background: rgba(255,255,255,0.2); }
+
+.lb-close {
+    position: absolute; top: -48px; right: 0;
+    font-size: 1.3rem;
+}
+
+.lb-meta {
+    text-align: center;
+}
+.lb-caption {
+    font-family: 'DM Sans', sans-serif;
+    color: rgba(255,255,255,0.65); font-size: 0.82rem;
+    line-height: 1.5;
+}
+.lb-counter {
+    font-family: 'DM Sans', sans-serif;
+    color: rgba(255,255,255,0.3); font-size: 0.7rem;
+    margin-top: 4px; letter-spacing: 1px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+    .photo-grid { grid-template-columns: repeat(3, 1fr); }
+    .photo-item:first-child { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+    .photo-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .photo-item:first-child { grid-column: span 2; grid-row: span 1; }
+    .ad-count-pill { display: none; }
+    .adetail-page { padding: 36px 0 60px; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'album_list' %}">Gallery</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ album.title }}</li>
-      </ol>
-    </nav>
+<div class="adetail-page">
+<div class="adetail-wrap">
 
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">{{ album.title }}</h1>
-        <p class="text-muted">{{ album.description }}</p>
-        <hr class="w-25 mx-auto">
+    {# ── BREADCRUMB ── #}
+    <div class="ad-breadcrumb">
+        <a href="{% url 'album_list' %}">Gallery</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>{{ album.title }}</span>
     </div>
 
-    <div class="row g-3"> {% for photo in album.photos.all %}
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="card shadow-sm h-100">
-                <img src="{{ photo.image.url }}" 
-                     class="card-img-top img-fluid rounded" 
-                     alt="{{ photo.caption }}"
-                     style="height: 200px; object-fit: cover; cursor: pointer;"
-                     onclick="window.open(this.src)">
-                
+    {# ── ALBUM HEADER ── #}
+    <div class="ad-header">
+        <div class="ad-header-left">
+            <div class="ad-tag">Photo Album</div>
+            <h1>{{ album.title }}</h1>
+            {% if album.description %}
+            <p>{{ album.description }}</p>
+            {% endif %}
+        </div>
+        <div class="ad-count-pill">
+            <i class="bi bi-camera-fill"></i>
+            {{ album.photos.count }} photo{{ album.photos.count|pluralize }}
+        </div>
+    </div>
+
+    {# ── PHOTO GRID ── #}
+    <div class="photo-grid" id="photoGrid">
+
+        {% for photo in album.photos.all %}
+        <div class="photo-item"
+             data-index="{{ forloop.counter0 }}"
+             onclick="openLightbox({{ forloop.counter0 }})">
+
+            <img src="{{ photo.image.url }}"
+                 alt="{{ photo.caption|default:album.title }}"
+                 loading="lazy">
+
+            <div class="photo-overlay">
                 {% if photo.caption %}
-                <div class="card-footer bg-white border-0">
-                    <small class="text-muted">{{ photo.caption }}</small>
-                </div>
+                <span class="photo-caption-text">{{ photo.caption }}</span>
                 {% endif %}
             </div>
+
+            <div class="photo-zoom"><i class="bi bi-zoom-in"></i></div>
         </div>
         {% empty %}
-        <div class="col-12 text-center">
-            <p class="alert alert-info">This album doesn't have any photos yet. Check back soon!</p>
+        <div class="ad-empty">
+            <i class="bi bi-camera-video-off"></i>
+            <h3>No Photos Yet</h3>
+            <p>This album doesn't have any photos yet. Check back soon!</p>
         </div>
         {% endfor %}
+
     </div>
 
-    <div class="text-center mt-5 mb-5">
-        <a href="{% url 'album_list' %}" class="btn btn-secondary">← Back to All Albums</a>
+    <a href="{% url 'album_list' %}" class="ad-back">
+        <i class="bi bi-arrow-left"></i> Back to All Albums
+    </a>
+
+</div>
+</div>
+
+
+<div id="lightbox">
+    <div class="lb-backdrop" onclick="closeLightbox()"></div>
+    <div class="lb-content">
+        <div class="lb-img-wrap">
+            <button class="lb-btn lb-close" onclick="closeLightbox()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <button class="lb-btn" id="lbPrev" onclick="lbNav(-1)">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <img class="lb-img" id="lbImg" src="" alt="">
+            <button class="lb-btn" id="lbNext" onclick="lbNav(1)">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+        <div class="lb-meta">
+            <div class="lb-caption" id="lbCaption"></div>
+            <div class="lb-counter" id="lbCounter"></div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+// Build photos array from Django data
+const photos = [
+    {% for photo in album.photos.all %}
+    {
+        src: "{{ photo.image.url }}",
+        caption: "{{ photo.caption|default:'' }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+
+let current = 0;
+
+function openLightbox(index) {
+    if (!photos.length) return;
+    current = index;
+    updateLightbox();
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+    current = (current + dir + photos.length) % photos.length;
+    updateLightbox();
+}
+
+function updateLightbox() {
+    const img = document.getElementById('lbImg');
+    img.style.opacity = '0';
+    setTimeout(() => {
+        img.src = photos[current].src;
+        img.alt = photos[current].caption;
+        img.style.opacity = '1';
+    }, 150);
+    document.getElementById('lbCaption').textContent = photos[current].caption;
+    document.getElementById('lbCounter').textContent = `${current + 1} / ${photos.length}`;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'ArrowLeft')  lbNav(-1);
+    if (e.key === 'ArrowRight') lbNav(1);
+    if (e.key === 'Escape')     closeLightbox();
+});
+</script>
 {% endblock %}

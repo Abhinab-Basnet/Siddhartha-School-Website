@@ -1,53 +1,553 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/index.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="p-5 mb-4 bg-light rounded-3 text-center">
-    <div class="container-fluid py-5">
-        <h1 class="display-5 fw-bold">Welcome to Our School</h1>
-        <p class="fs-4">Empowering students to achieve excellence since 1990.</p>
-        <button class="btn btn-primary btn-lg" type="button">Admission Open</button>
-    </div>
-</div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <h2 class="mb-4">Latest Notices</h2>
-            <div class="list-group">
-                {% for notice in notices %}
-                    <div class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1 text-primary">{{ notice.title }}</h5>
-                            <small class="text-muted">{{ notice.date_posted|date:"M d, Y" }}</small>
-                        </div>
-                        <p class="mb-1">{{ notice.content|truncatewords:20 }}</p>
-                    </div>
-                {% empty %}
-                    <div class="list-group-item">
-                        <p class="mb-0">No notices posted at this time.</p>
-                    </div>
-                {% endfor %}
+
+<section class="hero">
+
+    <div class="hero-bg"
+         style="background-image: url('{% static 'images/hero-school.jpg' %}');">
+    </div>
+
+    <div class="hero-content">
+
+        <div class="hero-text">
+            <div class="hero-badge">
+                <i class="bi bi-star-fill"></i>
+                <span>NEB Affiliated &nbsp;·&nbsp; Est. 1990</span>
+            </div>
+
+            <h1 class="hero-title">
+                Shaping Minds,
+                <em>Building Futures</em>
+            </h1>
+
+            <p class="hero-subtitle">
+                Siddhartha Secondary School is committed to nurturing young leaders
+                through academic excellence, moral integrity, and holistic development —
+                preparing students for a dynamic world.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#" class="btn-gold">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    Apply for Admission
+                </a>
+                <a href="{% url 'contact' %}"
+                   class="btn-outline"
+                   style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.85);">
+                    <i class="bi bi-chat-dots"></i>
+                    Enquire
+                </a>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h4">Quick Links</h2>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <a href="#" class="text-decoration-none">🔓 Student Portal</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="text-decoration-none">💳 Online Fees</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="{% url 'faculty_list' %}" class="text-decoration-none">👨‍🏫 Faculty Directory</a>
-                        </li>
-                    </ul>
+        {# Stats card — right side (hidden on mobile) #}
+        <div class="hero-stats">
+            <div class="stats-card">
+                <div class="stats-card-title">Our School at a Glance</div>
+
+                <div class="hero-img-placeholder">
+                    {# Replace with: <img src="{% static 'images/school-building.jpg' %}" alt="School Building"> #}
+                    <span>School Building Photo</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="30" data-suffix="+">30+</span>
+                        <span class="stat-label">Years of Excellence</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="1200" data-suffix="+">1200+</span>
+                        <span class="stat-label">Students Enrolled</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="60" data-suffix="+">60+</span>
+                        <span class="stat-label">Qualified Faculty</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="95" data-suffix="%">95%</span>
+                        <span class="stat-label">Board Pass Rate</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+    </div>
+
+    <div class="scroll-hint">
+        <i class="bi bi-chevron-double-down"></i>
+        <span>Scroll</span>
+    </div>
+</section>
+
+
+
+<div class="ticker-bar">
+    <div class="ticker-inner">
+        <div class="ticker-label">
+            <i class="bi bi-megaphone-fill"></i> Latest
+        </div>
+        <div class="ticker-track">
+            <div class="ticker-content" id="tickerContent">
+                {% for notice in latest_notices %}
+                    <span>{{ notice.title }}</span>
+                {% empty %}
+                    <span>Admission open for 2082/83 academic year — Apply now</span>
+                    <span>Welcome to Siddhartha Secondary School — Excellence in Education</span>
+                    <span>Annual Sports Day — Falgun 20, 2082 &nbsp;·&nbsp; All are welcome</span>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
+
+
+
+<div class="features-strip">
+    <div class="features-grid">
+        <div class="feature-item reveal">
+            <div class="feature-icon"><i class="bi bi-book-fill"></i></div>
+            <div class="feature-text">
+                <h6>NEB Curriculum</h6>
+                <p>Classes 9–12, Science &amp; Management</p>
+            </div>
+        </div>
+        <div class="feature-item reveal reveal-delay-1">
+            <div class="feature-icon"><i class="bi bi-trophy-fill"></i></div>
+            <div class="feature-text">
+                <h6>Award-Winning Faculty</h6>
+                <p>60+ experienced educators</p>
+            </div>
+        </div>
+        <div class="feature-item reveal reveal-delay-2">
+            <div class="feature-icon"><i class="bi bi-buildings-fill"></i></div>
+            <div class="feature-text">
+                <h6>Modern Facilities</h6>
+                <p>Labs, library &amp; sports complex</p>
+            </div>
+        </div>
+        <div class="feature-item reveal reveal-delay-3">
+            <div class="feature-icon"><i class="bi bi-shield-check-fill"></i></div>
+            <div class="feature-text">
+                <h6>Safe Environment</h6>
+                <p>CCTV-monitored, child-safe campus</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="ne-section">
+    <div class="ne-layout">
+
+        {# ── LEFT: NOTICES ── #}
+        <div class="card-panel reveal">
+            <div class="card-panel-header">
+                <h3><i class="bi bi-bell-fill"></i> Notices &amp; Announcements</h3>
+                <a href="{% url 'notice_list' %}" class="see-all">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            {% for notice in notices %}
+            <a href="#" class="notice-item">
+                <div class="notice-date-box">
+                    <span class="nd">{{ notice.date_posted|date:"d" }}</span>
+                    <span class="nm">{{ notice.date_posted|date:"M" }}</span>
+                </div>
+                <div class="notice-info">
+                    {# Adjust category field name to match your Notice model #}
+                    <span class="notice-tag
+                        {% if notice.category == 'exam'    %}tag-exam
+                        {% elif notice.category == 'event' %}tag-event
+                        {% elif notice.category == 'holiday' %}tag-holiday
+                        {% elif notice.category == 'result'  %}tag-result
+                        {% endif %}">
+                        {{ notice.category|default:"Notice"|title }}
+                    </span>
+                    <h6>{{ notice.title }}</h6>
+                    <p>{{ notice.content|truncatewords:18 }}</p>
+                </div>
+            </a>
+            {% empty %}
+            {# Fallback placeholders when no notices exist in DB yet #}
+            <a href="#" class="notice-item">
+                <div class="notice-date-box">
+                    <span class="nd">01</span>
+                    <span class="nm">Mar</span>
+                </div>
+                <div class="notice-info">
+                    <span class="notice-tag">Academic</span>
+                    <h6>Admission Open for Academic Year 2082/83</h6>
+                    <p>Applications are now being accepted for Class 9 and Class 11 (Science &amp; Management).</p>
+                </div>
+            </a>
+            <a href="#" class="notice-item">
+                <div class="notice-date-box">
+                    <span class="nd">25</span>
+                    <span class="nm">Feb</span>
+                </div>
+                <div class="notice-info">
+                    <span class="notice-tag tag-exam">Exam</span>
+                    <h6>Second Terminal Examination Schedule Released</h6>
+                    <p>Exams start from Falgun 20 — check your admit cards at the school office.</p>
+                </div>
+            </a>
+            <a href="#" class="notice-item">
+                <div class="notice-date-box">
+                    <span class="nd">18</span>
+                    <span class="nm">Feb</span>
+                </div>
+                <div class="notice-info">
+                    <span class="notice-tag tag-event">Event</span>
+                    <h6>Annual Science Exhibition — Registrations Open</h6>
+                    <p>Students of Class 9–12 may register projects before the deadline of Falgun 15.</p>
+                </div>
+            </a>
+            <a href="#" class="notice-item">
+                <div class="notice-date-box">
+                    <span class="nd">10</span>
+                    <span class="nm">Feb</span>
+                </div>
+                <div class="notice-info">
+                    <span class="notice-tag tag-holiday">Holiday</span>
+                    <h6>School Closed — Falgun 7, 2082 (Public Holiday)</h6>
+                    <p>The school will remain closed on Falgun 7 in observance of the national holiday.</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {# ── RIGHT SIDEBAR ── #}
+        <div class="ne-sidebar">
+
+            {# UPCOMING EVENTS — data from events app #}
+            <div class="card-panel reveal reveal-delay-1">
+                <div class="card-panel-header">
+                    <h3><i class="bi bi-calendar-event-fill"></i> Upcoming Events</h3>
+                    <a href="{% url 'event_list' %}" class="see-all">
+                        All <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                {% for event in upcoming_events %}
+                <a href="#" class="event-item">
+                    <div class="event-dot"
+                         style="background:{{ event.color|default:'var(--gold)' }};
+                                box-shadow: 0 0 0 3px {{ event.color|default:'rgba(201,168,76,0.2)' }}20;">
+                    </div>
+                    <div class="event-info">
+                        <h6>{{ event.title }}</h6>
+                        <div class="event-meta">
+                            <span>
+                                <i class="bi bi-calendar3"></i>
+                                {{ event.date|date:"M d, Y" }}
+                            </span>
+                            {% if event.location %}
+                            <span>
+                                <i class="bi bi-geo-alt"></i>
+                                {{ event.location }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                {# Fallback events #}
+                <a href="#" class="event-item">
+                    <div class="event-dot"></div>
+                    <div class="event-info">
+                        <h6>Annual Sports Day 2082</h6>
+                        <div class="event-meta">
+                            <span><i class="bi bi-calendar3"></i> Falgun 20, 2082</span>
+                            <span><i class="bi bi-geo-alt"></i> School Ground</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="event-item">
+                    <div class="event-dot" style="background:#4a90d9;box-shadow:0 0 0 3px rgba(74,144,217,0.2);"></div>
+                    <div class="event-info">
+                        <h6>Parent–Teacher Meeting</h6>
+                        <div class="event-meta">
+                            <span><i class="bi bi-calendar3"></i> Chaitra 1, 2082</span>
+                            <span><i class="bi bi-geo-alt"></i> Main Hall</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="event-item">
+                    <div class="event-dot" style="background:#5cb85c;box-shadow:0 0 0 3px rgba(92,184,92,0.2);"></div>
+                    <div class="event-info">
+                        <h6>Science Exhibition 2082</h6>
+                        <div class="event-meta">
+                            <span><i class="bi bi-calendar3"></i> Chaitra 5, 2082</span>
+                            <span><i class="bi bi-geo-alt"></i> Science Block</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="event-item">
+                    <div class="event-dot" style="background:#d97b4a;box-shadow:0 0 0 3px rgba(217,123,74,0.2);"></div>
+                    <div class="event-info">
+                        <h6>Farewell Ceremony — Grade 12</h6>
+                        <div class="event-meta">
+                            <span><i class="bi bi-calendar3"></i> Chaitra 15, 2082</span>
+                            <span><i class="bi bi-geo-alt"></i> Auditorium</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            {# QUICK ACCESS #}
+            <div class="card-panel reveal reveal-delay-2">
+                <div class="card-panel-header">
+                    <h3><i class="bi bi-lightning-fill"></i> Quick Access</h3>
+                </div>
+                <div class="qa-grid">
+                    <a href="#" class="qa-item">
+                        <i class="bi bi-person-circle"></i> Student Portal
+                    </a>
+                    <a href="#" class="qa-item">
+                        <i class="bi bi-credit-card-fill"></i> Pay Fees
+                    </a>
+                    <a href="{% url 'faculty_list' %}" class="qa-item">
+                        <i class="bi bi-people-fill"></i> Faculty
+                    </a>
+                    <a href="#" class="qa-item">
+                        <i class="bi bi-file-earmark-text-fill"></i> Results
+                    </a>
+                </div>
+            </div>
+
+        </div>{# end sidebar #}
+
+    </div>
+</section>
+
+
+
+<section class="about-section">
+    <div class="about-layout">
+
+        <div class="about-images reveal">
+            <div class="about-img-main">
+                {# Replace with: <img src="{% static 'images/school-hall.jpg' %}" alt="School Hall"> #}
+                <span>School Hall / Campus Photo</span>
+            </div>
+            <div class="about-img-float">
+                {# Replace with: <img src="{% static 'images/students.jpg' %}" alt="Students"> #}
+                <span>Students Photo</span>
+            </div>
+            <div class="about-badge-float">
+                <span class="num">30+</span>
+                <span class="lbl">Years of Trust</span>
+            </div>
+        </div>
+
+        <div class="about-text reveal reveal-delay-1">
+            <div class="section-label">About Us</div>
+            <h2 class="section-title" style="margin-bottom:24px;">
+                A Legacy of <span>Excellence</span> in Education
+            </h2>
+            <p>
+                Siddhartha Secondary School has been a cornerstone of quality education in
+                Biratnagar since its founding. We believe every student holds the potential
+                to achieve extraordinary things when given the right environment, mentorship,
+                and inspiration.
+            </p>
+            <p>
+                Our dedicated faculty, state-of-the-art facilities, and holistic approach to
+                learning create an atmosphere where academic rigour meets personal growth —
+                shaping confident, compassionate, and capable individuals.
+            </p>
+
+            <ul class="about-list">
+                <li><i class="bi bi-check-circle-fill"></i> NEB Affiliated Classes 9–12</li>
+                <li><i class="bi bi-check-circle-fill"></i> Science &amp; Management Streams</li>
+                <li><i class="bi bi-check-circle-fill"></i> Experienced Teaching Staff</li>
+                <li><i class="bi bi-check-circle-fill"></i> Digital Classrooms &amp; Labs</li>
+                <li><i class="bi bi-check-circle-fill"></i> Sports &amp; Cultural Programs</li>
+                <li><i class="bi bi-check-circle-fill"></i> Safe &amp; Inclusive Campus</li>
+            </ul>
+
+            <div class="about-actions">
+                <a href="{% url 'about_introduction' %}" class="btn-gold">
+                    Learn More <i class="bi bi-arrow-right"></i>
+                </a>
+                <a href="{% url 'contact' %}" class="btn-outline">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<section class="quicklinks-section">
+    <div class="container-xl">
+        <div class="quicklinks-header reveal">
+            <div class="section-label" style="justify-content:center;">Explore</div>
+            <h2 class="section-title">Discover <span>Siddhartha School</span></h2>
+        </div>
+
+        <div class="ql-grid">
+            <a href="{% url 'dept_list' %}" class="ql-card reveal">
+                <div class="ql-icon"><i class="bi bi-diagram-3-fill"></i></div>
+                <div class="ql-title">Departments</div>
+                <div class="ql-desc">Science, Maths, Humanities &amp; more</div>
+            </a>
+            <a href="{% url 'faculty_list' %}" class="ql-card reveal reveal-delay-1">
+                <div class="ql-icon"><i class="bi bi-person-badge-fill"></i></div>
+                <div class="ql-title">Faculty</div>
+                <div class="ql-desc">Meet our expert educators</div>
+            </a>
+            <a href="{% url 'album_list' %}" class="ql-card reveal reveal-delay-2">
+                <div class="ql-icon"><i class="bi bi-images"></i></div>
+                <div class="ql-title">Photo Gallery</div>
+                <div class="ql-desc">Life on campus in pictures</div>
+            </a>
+            <a href="#" class="ql-card reveal reveal-delay-3">
+                <div class="ql-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                <div class="ql-title">Admissions</div>
+                <div class="ql-desc">Apply for 2082/83 session</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<section class="gallery-section">
+
+    <div class="gallery-header reveal">
+        <div>
+            <div class="section-label">Campus Life</div>
+            <h2 class="section-title">Moments at <span>Siddhartha</span></h2>
+        </div>
+        <a href="{% url 'album_list' %}" class="btn-outline">
+            Full Gallery <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="gallery-mosaic">
+        {% for photo in gallery_photos %}
+        <div class="gallery-item reveal {% if forloop.counter == 1 %}reveal{% else %}reveal-delay-{{ forloop.counter }}{% endif %}">
+            <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:photo.album.title }}">
+            <div class="gallery-overlay">
+                <span>{{ photo.caption|default:photo.album.title }}</span>
+            </div>
+        </div>
+        {% empty %}
+        {# Fallback placeholders until real photos are added #}
+        <div class="gallery-item reveal">
+            <div class="gallery-ph">School Building<br><small>Add photo</small></div>
+            <div class="gallery-overlay"><span>School Building</span></div>
+        </div>
+        <div class="gallery-item reveal reveal-delay-1">
+            <div class="gallery-ph">Science Lab<br><small>Add photo</small></div>
+            <div class="gallery-overlay"><span>Science Lab</span></div>
+        </div>
+        <div class="gallery-item reveal reveal-delay-2">
+            <div class="gallery-ph">Sports Day<br><small>Add photo</small></div>
+            <div class="gallery-overlay"><span>Sports Day</span></div>
+        </div>
+        <div class="gallery-item reveal reveal-delay-1">
+            <div class="gallery-ph">Library<br><small>Add photo</small></div>
+            <div class="gallery-overlay"><span>Library</span></div>
+        </div>
+        <div class="gallery-item reveal reveal-delay-3">
+            <div class="gallery-ph">Cultural Event<br><small>Add photo</small></div>
+            <div class="gallery-overlay"><span>Cultural Event</span></div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+
+<section class="principal-section">
+    <div class="principal-layout">
+
+        <div class="principal-photo reveal">
+            {% if principal and principal.photo %}
+                <img src="{{ principal.photo.url }}" alt="{{ principal.name }}">
+            {% else %}
+                {# Replace with: <img src="{% static 'images/principal.jpg' %}" alt="Principal"> #}
+                <span>Principal's Photo</span>
+            {% endif %}
+        </div>
+
+        <div class="principal-message reveal reveal-delay-1">
+            <div class="section-label">From The Principal's Desk</div>
+
+            <blockquote>
+                {% if principal and principal.quote %}
+                    "{{ principal.quote }}"
+                {% else %}
+                    "Education is not just about acquiring knowledge — it is about igniting a
+                    lifelong love of learning, building character, and preparing young people
+                    to lead with purpose and compassion."
+                {% endif %}
+            </blockquote>
+
+            <p>
+                {% if principal and principal.message %}
+                    {{ principal.message|truncatewords:60 }}
+                {% else %}
+                    At Siddhartha Secondary School, we believe in nurturing the whole child —
+                    academically, socially, and emotionally. Our dedicated teachers, supportive
+                    parents, and vibrant community come together each day to create an
+                    environment where every student is valued and empowered to grow.
+                {% endif %}
+            </p>
+
+            <div class="principal-sig">
+                <div class="principal-sig-line"></div>
+                <div>
+                    <div class="principal-sig-name">
+                        {{ principal.name|default:"Mr. Arjun Basnet" }}
+                    </div>
+                    <div class="principal-sig-role">
+                        Principal, Siddhartha Secondary School
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+
+<section class="cta-section">
+    <div class="cta-inner">
+        <div class="cta-text reveal">
+            <h2>Join the Siddhartha Family</h2>
+            <p>Admissions are now open for the 2082/83 academic year. Be part of our legacy.</p>
+        </div>
+        <div class="cta-actions reveal reveal-delay-1">
+            <a href="#" class="btn-gold">
+                <i class="bi bi-mortarboard-fill"></i>
+                Apply Now
+            </a>
+            <a href="{% url 'contact' %}"
+               class="btn-outline"
+               style="border-color:rgba(255,255,255,0.3);color:var(--white);">
+                <i class="bi bi-chat-dots"></i>
+                Enquire
+            </a>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'core/js/index.js' %}"></script>
 {% endblock %}
