@@ -1,37 +1,419 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   EVENTS / ACADEMIC CALENDAR PAGE
+   Timeline-style, clean and scannable
+============================================= */
+
+.cal-page { background: #f2f5f9; min-height: 100vh; padding: 60px 0 80px; }
+.cal-wrap  { max-width: 900px; margin: 0 auto; padding: 0 28px; }
+
+/* ── HEADING ── */
+.cal-heading { margin-bottom: 48px; }
+
+.c-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #5a7a9a;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 10px;
+}
+.c-label::before, .c-label::after {
+    content: ''; display: block; width: 20px; height: 1px; background: #b0bac8;
+}
+
+.cal-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 900; color: #0a1628;
+    line-height: 1.1; margin: 0 0 10px; letter-spacing: -0.3px;
+}
+.cal-heading h1 span { color: #3b6ea5; }
+
+.cal-heading p {
+    font-size: 0.88rem; color: #7a8a9e;
+    font-family: 'DM Sans', sans-serif;
+    max-width: 440px; line-height: 1.65; margin: 0;
+}
+
+/* ── FILTER TABS ── */
+.cal-tabs {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 36px; flex-wrap: wrap;
+}
+
+.cal-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 50px;
+    border: 1.5px solid #e0e8f0;
+    background: #fff; color: #7a8a9e;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.76rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
+}
+.cal-tab:hover { border-color: #0a1628; color: #0a1628; }
+.cal-tab.active { background: #0a1628; color: #fff; border-color: #0a1628; }
+
+.cal-tab-count {
+    background: rgba(255,255,255,0.2);
+    font-size: 0.6rem; padding: 1px 6px;
+    border-radius: 20px; font-weight: 700;
+}
+.cal-tab:not(.active) .cal-tab-count {
+    background: #eef2f8; color: #8a96a3;
+}
+
+/* ── TIMELINE LIST ── */
+.cal-list { display: flex; flex-direction: column; gap: 0; }
+
+/* month separator */
+.cal-month-sep {
+    display: flex; align-items: center; gap: 14px;
+    margin: 32px 0 16px; font-family: 'Playfair Display', serif;
+    font-size: 0.9rem; font-weight: 700; color: #0a1628;
+}
+.cal-month-sep:first-child { margin-top: 0; }
+.cal-month-line {
+    flex: 1; height: 1px; background: #dde5ef;
+}
+
+/* event card */
+.cal-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e4eaf2;
+    box-shadow: 0 2px 12px rgba(10,22,40,0.05);
+    display: grid;
+    grid-template-columns: 76px 1fr auto;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 10px;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+
+    opacity: 0; transform: translateX(-12px);
+    animation: ceIn 0.45s ease forwards;
+}
+.cal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 32px rgba(10,22,40,0.1);
+    border-color: #c0cedd;
+}
+@keyframes ceIn { to { opacity: 1; transform: translateX(0); } }
+.cal-card:nth-child(1)  { animation-delay: 0.04s; }
+.cal-card:nth-child(2)  { animation-delay: 0.08s; }
+.cal-card:nth-child(3)  { animation-delay: 0.12s; }
+.cal-card:nth-child(4)  { animation-delay: 0.16s; }
+.cal-card:nth-child(5)  { animation-delay: 0.20s; }
+.cal-card:nth-child(6)  { animation-delay: 0.24s; }
+.cal-card:nth-child(7)  { animation-delay: 0.28s; }
+.cal-card:nth-child(8)  { animation-delay: 0.32s; }
+
+/* ── DATE COLUMN ── */
+.cal-date-col {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px 0; height: 100%; min-height: 96px;
+    background: #f7f9fc;
+    border-right: 1px solid #edf1f7;
+}
+
+.cal-day {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 700;
+    color: #0a1628; line-height: 1;
+}
+.cal-month-label {
+    font-size: 0.58rem; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #8a96a3;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-top: 3px;
+}
+
+/* Holiday date gets red tint */
+.cal-card.is-holiday .cal-date-col {
+    background: #fff5f5;
+}
+.cal-card.is-holiday .cal-day { color: #c0392b; }
+.cal-card.is-holiday .cal-month-label { color: #e07070; }
+
+/* ── CONTENT ── */
+.cal-content {
+    padding: 16px 20px;
+    display: flex; flex-direction: column; gap: 5px;
+}
+
+.cal-type-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.6rem; text-transform: uppercase;
+    letter-spacing: 1.2px; font-weight: 700;
+    padding: 2px 9px; border-radius: 20px;
+    width: fit-content;
+}
+/* tag colors by type */
+.tag-holiday  { background: rgba(192,57,43,0.1);  color: #c0392b; }
+.tag-exam     { background: rgba(41,128,185,0.1);  color: #2980b9; }
+.tag-cultural { background: rgba(142,68,173,0.1);  color: #8e44ad; }
+.tag-sports   { background: rgba(39,174,96,0.1);   color: #27ae60; }
+.tag-academic { background: rgba(10,22,40,0.07);   color: #34495e; }
+.tag-meeting  { background: rgba(230,126,34,0.1);  color: #e67e22; }
+
+.cal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.98rem; font-weight: 700;
+    color: #0a1628; margin: 0; line-height: 1.35;
+}
+
+.cal-meta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.74rem; color: #8a96a3;
+}
+.cal-meta span { display: flex; align-items: center; gap: 5px; }
+.cal-meta i { font-size: 0.72rem; }
+
+.cal-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; color: #6a7a8e;
+    line-height: 1.55; margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── RIGHT BADGE ── */
+.cal-badge-col {
+    padding: 16px 18px 16px 0;
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 8px;
+    flex-shrink: 0;
+}
+
+.cal-holiday-badge {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(192,57,43,0.08);
+    color: #c0392b;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.62rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 5px 10px; border-radius: 8px;
+    border: 1px solid rgba(192,57,43,0.15);
+    white-space: nowrap;
+}
+
+/* ── EMPTY STATE ── */
+.cal-empty {
+    text-align: center; padding: 80px 24px;
+    background: #fff; border-radius: 16px;
+    border: 1px dashed #cdd5e0;
+}
+.cal-empty i { font-size: 3rem; color: #c0ccd8; display: block; margin-bottom: 16px; }
+.cal-empty h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #0a1628; margin-bottom: 8px; }
+.cal-empty p  { font-size: 0.85rem; color: #8a96a3; margin: 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+    .cal-card { grid-template-columns: 60px 1fr; }
+    .cal-badge-col { display: none; }
+    .cal-day  { font-size: 1.35rem; }
+    .cal-wrap { padding: 0 16px; }
+    .cal-page { padding: 40px 0 60px; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5 fw-bold">School Calendar & Upcoming Events</h1>
-    
-    <div class="row justify-content-center">
-        <div class="col-md-9">
-            {% for event in events %}
-            <div class="card mb-3 shadow-sm border-0 border-start border-4 {% if event.is_holiday %}border-danger{% else %}border-primary{% endif %}">
-                <div class="card-body d-flex align-items-center">
-                    <div class="text-center p-3 rounded bg-light me-4" style="min-width: 80px;">
-                        <span class="d-block fw-bold text-uppercase small">{{ event.event_date|date:"M" }}</span>
-                        <span class="d-block h3 mb-0 fw-bold">{{ event.event_date|date:"d" }}</span>
-                    </div>
-                    
-                    <div class="flex-grow-1">
-                        <h4 class="mb-1 fw-bold">{{ event.title }}</h4>
-                        <p class="mb-0 text-muted">
-                            <i class="bi bi-clock"></i> {{ event.start_time|default:"All Day" }} | 
-                            <i class="bi bi-geo-alt"></i> {{ event.location }}
-                        </p>
-                       <p class="mt-2 text-break">{{ event.description }}</p>
-                    </div>
+<div class="cal-page">
+<div class="cal-wrap">
 
-                    {% if event.is_holiday %}
-                    <span class="badge bg-danger">School Holiday</span>
+    {# ── HEADING ── #}
+    <div class="cal-heading">
+        <div class="c-label">Academic Year 2082/83</div>
+        <h1>School <span>Calendar</span></h1>
+        <p>Stay up to date with upcoming events, holidays, examinations, and school activities.</p>
+    </div>
+
+    {# ── FILTER TABS ── #}
+    <div class="cal-tabs">
+        <button class="cal-tab active" data-filter="all">
+            All <span class="cal-tab-count" id="count-all">{{ events|length }}</span>
+        </button>
+        <button class="cal-tab" data-filter="holiday">
+            <i class="bi bi-calendar-x" style="font-size:.7rem;"></i>
+            Holidays
+        </button>
+        <button class="cal-tab" data-filter="exam">
+            <i class="bi bi-pencil" style="font-size:.7rem;"></i>
+            Exams
+        </button>
+        <button class="cal-tab" data-filter="cultural">
+            <i class="bi bi-star" style="font-size:.7rem;"></i>
+            Cultural
+        </button>
+        <button class="cal-tab" data-filter="sports">
+            <i class="bi bi-trophy" style="font-size:.7rem;"></i>
+            Sports
+        </button>
+        <button class="cal-tab" data-filter="academic">
+            <i class="bi bi-book" style="font-size:.7rem;"></i>
+            Academic
+        </button>
+    </div>
+
+    {# ── EVENT LIST ── #}
+    <div class="cal-list" id="calList">
+
+        {% regroup events by event_date|date:"F Y" as month_groups %}
+
+        {% for month in month_groups %}
+
+        {# Month separator #}
+        <div class="cal-month-sep">
+            <span>{{ month.grouper }}</span>
+            <div class="cal-month-line"></div>
+            <span style="font-family:'DM Sans',sans-serif;font-size:0.68rem;color:#a0aab4;font-weight:600;white-space:nowrap;">
+                {{ month.list|length }} event{{ month.list|length|pluralize }}
+            </span>
+        </div>
+
+        {% for event in month.list %}
+        <div class="cal-card {% if event.is_holiday %}is-holiday{% endif %}"
+             data-type="{{ event.event_type|default:'academic'|lower }}">
+
+            {# Date #}
+            <div class="cal-date-col">
+                <span class="cal-day">{{ event.event_date|date:"d" }}</span>
+                <span class="cal-month-label">{{ event.event_date|date:"M" }}</span>
+            </div>
+
+            {# Content #}
+            <div class="cal-content">
+                {# Type tag — adjust field name if yours differs #}
+                <span class="cal-type-tag
+                    {% if event.is_holiday %}tag-holiday
+                    {% elif event.event_type == 'exam' %}tag-exam
+                    {% elif event.event_type == 'cultural' %}tag-cultural
+                    {% elif event.event_type == 'sports' %}tag-sports
+                    {% elif event.event_type == 'meeting' %}tag-meeting
+                    {% else %}tag-academic{% endif %}">
+                    <i class="bi
+                        {% if event.is_holiday %}bi-calendar-x-fill
+                        {% elif event.event_type == 'exam' %}bi-pencil-fill
+                        {% elif event.event_type == 'cultural' %}bi-music-note-beamed
+                        {% elif event.event_type == 'sports' %}bi-trophy-fill
+                        {% else %}bi-bookmark-fill{% endif %}"
+                       style="font-size:.5rem;"></i>
+                    {% if event.is_holiday %}Holiday
+                    {% else %}{{ event.event_type|default:"Academic"|title }}{% endif %}
+                </span>
+
+                <h3 class="cal-title">{{ event.title }}</h3>
+
+                <div class="cal-meta">
+                    {% if event.start_time %}
+                    <span>
+                        <i class="bi bi-clock"></i>
+                        {{ event.start_time }}
+                    </span>
+                    {% else %}
+                    <span>
+                        <i class="bi bi-clock"></i>
+                        All Day
+                    </span>
+                    {% endif %}
+
+                    {% if event.location %}
+                    <span>
+                        <i class="bi bi-geo-alt"></i>
+                        {{ event.location }}
+                    </span>
                     {% endif %}
                 </div>
+
+                {% if event.description %}
+                <p class="cal-desc">{{ event.description }}</p>
+                {% endif %}
             </div>
-            {% empty %}
-            <div class="alert alert-info text-center">No upcoming events scheduled at the moment.</div>
-            {% endfor %}
+
+            {# Right badge #}
+            <div class="cal-badge-col">
+                {% if event.is_holiday %}
+                <div class="cal-holiday-badge">
+                    <i class="bi bi-x-circle-fill" style="font-size:.65rem;"></i>
+                    No School
+                </div>
+                {% endif %}
+            </div>
+
         </div>
-    </div>
+        {% endfor %}
+
+        {% empty %}
+        <div class="cal-empty">
+            <i class="bi bi-calendar3"></i>
+            <h3>No Events Scheduled</h3>
+            <p>Events and holidays will appear here once added to the calendar.</p>
+        </div>
+        {% endfor %}
+
+    </div>{# end cal-list #}
+
 </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const tabs  = document.querySelectorAll('.cal-tab');
+    const cards = document.querySelectorAll('.cal-card');
+    const seps  = document.querySelectorAll('.cal-month-sep');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const filter = tab.dataset.filter;
+
+            // Show/hide cards
+            cards.forEach(card => {
+                const type    = card.dataset.type;
+                const holiday = card.classList.contains('is-holiday');
+
+                let show = false;
+                if (filter === 'all')     show = true;
+                else if (filter === 'holiday')  show = holiday;
+                else show = (type === filter);
+
+                card.style.display = show ? '' : 'none';
+            });
+
+            // Hide month separators that have no visible cards after them
+            seps.forEach(sep => {
+                // Find the cards that follow this separator until next sep
+                let next = sep.nextElementSibling;
+                let hasVisible = false;
+                while (next && !next.classList.contains('cal-month-sep')) {
+                    if (next.classList.contains('cal-card') &&
+                        next.style.display !== 'none') {
+                        hasVisible = true;
+                        break;
+                    }
+                    next = next.nextElementSibling;
+                }
+                sep.style.display = hasVisible ? '' : 'none';
+            });
+        });
+    });
+
+});
+</script>
 {% endblock %}

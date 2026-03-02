@@ -1,0 +1,469 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* =============================================
+   SCHOOL MOTTO PAGE
+   Navy primary · Orange/Gold accents · Dignified feel
+============================================= */
+
+.motto-page { background: #f0f4ff; min-height: 100vh; padding: 64px 0 100px; }
+.motto-wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* BREADCRUMB */
+.motto-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: #8a96b8;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 52px;
+}
+.motto-breadcrumb a { color: #4a6fd4; text-decoration: none; transition: color 0.2s; }
+.motto-breadcrumb a:hover { color: #1a3a8f; }
+.motto-breadcrumb i { font-size: 0.55rem; color: #b8c4e0; }
+
+/* PAGE HEADING */
+.motto-heading { text-align: center; margin-bottom: 72px; }
+.motto-page-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 14px;
+}
+.motto-page-label::before, .motto-page-label::after {
+    content: ''; display: block; width: 24px; height: 1.5px;
+    background: linear-gradient(to right, transparent, #4a6fd4);
+}
+.motto-page-label::after { background: linear-gradient(to left, transparent, #4a6fd4); }
+.motto-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900; color: #0f1f5c;
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.5px;
+}
+.motto-heading h1 .accent-orange { color: #e05a2b; }
+.motto-heading h1 .accent-blue   { color: #4a6fd4; }
+.motto-heading p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem; color: #6a7a9e;
+    line-height: 1.75; margin: 0 auto; max-width: 520px;
+}
+
+/* MAIN MOTTO CARD */
+.motto-card {
+    background: #fff; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 4px 40px rgba(74,111,212,0.1);
+    margin-bottom: 28px; border: 1px solid #dde8ff;
+    display: grid; grid-template-columns: 300px 1fr;
+}
+.motto-accent {
+    background: linear-gradient(160deg, #e05a2b 0%, #f5854a 40%, #f7a456 100%);
+    padding: 48px 36px; display: flex; flex-direction: column;
+    justify-content: center; gap: 20px;
+    position: relative; overflow: hidden;
+}
+.motto-accent::before {
+    content: ''; position: absolute; bottom: -60px; right: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+}
+.motto-accent::after {
+    content: ''; position: absolute; top: -30px; left: -30px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+}
+.motto-big-icon { font-size: 3.5rem; color: rgba(255,255,255,0.9); position: relative; z-index: 1; }
+.motto-accent-line { width: 40px; height: 3px; background: rgba(255,255,255,0.5); border-radius: 2px; position: relative; z-index: 1; }
+.motto-accent-sub {
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+    color: rgba(255,255,255,0.75); font-weight: 500; margin: 0;
+    position: relative; z-index: 1; text-transform: uppercase; letter-spacing: 1.5px;
+}
+.motto-accent-quote {
+    font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 900;
+    color: #fff; line-height: 1.25; margin: 0; position: relative; z-index: 1; font-style: italic;
+}
+.motto-accent-words { display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 1; }
+.motto-word-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.18); border-radius: 50px; padding: 5px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700;
+    color: #fff; letter-spacing: 1px; text-transform: uppercase;
+}
+.motto-word-badge i { font-size: 0.7rem; }
+.motto-content { padding: 44px 48px; }
+.motto-content h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;
+    color: #0f1f5c; margin: 0 0 16px;
+}
+.motto-content .lead-text {
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; color: #4a5568;
+    line-height: 1.85; margin: 0 0 20px; font-weight: 500;
+}
+.motto-content p {
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: #6a7a8e;
+    line-height: 1.85; margin: 0 0 20px;
+}
+
+/* THREE PILLARS */
+.pillars-section { margin-bottom: 28px; }
+.pillars-eyebrow { text-align: center; margin-bottom: 32px; }
+.pillars-eyebrow span {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+}
+.pillars-eyebrow h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 800;
+    color: #0f1f5c; margin: 8px 0 0;
+}
+.pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.pillar-card {
+    background: #fff; border-radius: 20px; padding: 36px 28px;
+    border: 1px solid #dde8ff; box-shadow: 0 2px 20px rgba(74,111,212,0.07);
+    transition: transform 0.25s, box-shadow 0.25s; position: relative; overflow: hidden;
+}
+.pillar-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(74,111,212,0.14); }
+.pillar-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; border-radius: 20px 20px 0 0;
+}
+.pillar-card.orange::before { background: linear-gradient(to right, #e05a2b, #f7a456); }
+.pillar-card.blue::before   { background: linear-gradient(to right, #1a3a8f, #4a6fd4); }
+.pillar-card.gold::before   { background: linear-gradient(to right, #c9a84c, #f5ce6e); }
+.pillar-number { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; line-height: 1; margin-bottom: 12px; }
+.pillar-card.orange .pillar-number { color: rgba(224,90,43,0.15); }
+.pillar-card.blue   .pillar-number { color: rgba(74,111,212,0.15); }
+.pillar-card.gold   .pillar-number { color: rgba(201,168,76,0.2); }
+.pillar-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 18px;
+}
+.pillar-card.orange .pillar-icon-wrap { background: linear-gradient(135deg, #e05a2b, #f7a456); color: #fff; }
+.pillar-card.blue   .pillar-icon-wrap { background: linear-gradient(135deg, #1a3a8f, #4a6fd4); color: #fff; }
+.pillar-card.gold   .pillar-icon-wrap { background: linear-gradient(135deg, #c9a84c, #f5ce6e); color: #fff; }
+.pillar-card h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800;
+    color: #0f1f5c; margin: 0 0 10px;
+}
+.pillar-card p { font-family: 'DM Sans', sans-serif; font-size: 0.84rem; color: #6a7a8e; line-height: 1.7; margin: 0 0 20px; }
+.pillar-traits { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.pillar-trait { display: flex; align-items: center; gap: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: #4a5568; }
+.trait-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.pillar-card.orange .trait-dot { background: #e05a2b; }
+.pillar-card.blue   .trait-dot { background: #4a6fd4; }
+.pillar-card.gold   .trait-dot { background: #c9a84c; }
+
+/* QUOTE STRIP */
+.quote-strip {
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    border-radius: 20px; padding: 44px 56px; text-align: center;
+    margin-bottom: 28px; position: relative; overflow: hidden;
+}
+.quote-strip::before {
+    content: '\201C'; font-family: 'Playfair Display', serif;
+    font-size: 14rem; font-weight: 900; color: rgba(255,255,255,0.04);
+    position: absolute; top: -40px; left: 24px; line-height: 1;
+}
+.quote-strip blockquote {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 700; font-style: italic; color: #fff; margin: 0 0 16px;
+    line-height: 1.5; position: relative; z-index: 1;
+}
+.quote-strip blockquote span { color: #f7a456; }
+.quote-strip cite {
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.5);
+    font-style: normal; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
+    position: relative; z-index: 1; display: block;
+}
+
+/* DAILY PRACTICES */
+.practices-section { margin-bottom: 56px; }
+.practices-eyebrow { text-align: center; margin-bottom: 36px; }
+.practices-eyebrow span {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+}
+.practices-eyebrow h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 800;
+    color: #0f1f5c; margin: 8px 0 0;
+}
+.practices-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.practice-item {
+    background: #fff; border-radius: 16px; padding: 24px;
+    border: 1px solid #dde8ff; box-shadow: 0 2px 12px rgba(74,111,212,0.06);
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.practice-item:hover { transform: translateX(4px); box-shadow: 0 6px 24px rgba(224,90,43,0.12); }
+.practice-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+}
+.pi-orange { background: rgba(224,90,43,0.1);  color: #e05a2b; }
+.pi-blue   { background: rgba(74,111,212,0.1); color: #4a6fd4; }
+.pi-teal   { background: rgba(16,185,129,0.1); color: #10b981; }
+.pi-purple { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+.pi-gold   { background: rgba(201,168,76,0.1); color: #c9a84c; }
+.pi-rose   { background: rgba(244,63,94,0.1);  color: #f43f5e; }
+.practice-text h4 {
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 700;
+    color: #0f1f5c; margin: 0 0 5px;
+}
+.practice-text p { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: #6a7a8e; line-height: 1.6; margin: 0; }
+
+/* BANNER */
+.motto-banner {
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    border-radius: 22px; padding: 52px 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap; position: relative; overflow: hidden;
+}
+.motto-banner::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+}
+.mb-text { position: relative; z-index: 1; }
+.mb-text h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800;
+    color: #fff; margin: 0 0 10px; line-height: 1.2;
+}
+.mb-text p { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.65; max-width: 420px; }
+.mb-actions { display: flex; gap: 14px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 1; }
+.mb-btn-white {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: #0f1f5c; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 12px 24px; border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.mb-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #0f1f5c; }
+.mb-btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.3); font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 12px 24px; border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.mb-btn-outline:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .motto-card     { grid-template-columns: 1fr; }
+    .pillars-grid   { grid-template-columns: 1fr; }
+    .practices-grid { grid-template-columns: 1fr; }
+    .motto-banner   { padding: 36px 28px; }
+}
+@media (max-width: 580px) {
+    .motto-content { padding: 28px 24px; }
+    .motto-accent  { padding: 32px 24px; }
+    .motto-page    { padding: 44px 0 60px; }
+    .quote-strip   { padding: 32px 28px; }
+    .mb-text h3    { font-size: 1.3rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="motto-page">
+<div class="motto-wrap">
+
+    {# BREADCRUMB #}
+    <div class="motto-breadcrumb">
+        <a href="/">Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="#">About Us</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>School Motto</span>
+    </div>
+
+    {# PAGE HEADING #}
+    <div class="motto-heading">
+        <div class="motto-page-label">Our Guiding Principle</div>
+        <h1>
+            Our School <span class="accent-orange">Motto</span>
+            &amp;
+            <span class="accent-blue">Core Pillars</span>
+        </h1>
+        <p>
+            The timeless words that define who we are at Siddhartha Secondary School —
+            shaping students, teachers, and the wider community every single day.
+        </p>
+    </div>
+
+    {# MAIN MOTTO CARD #}
+    <div class="motto-card">
+        <div class="motto-accent">
+            <div class="motto-big-icon">
+                <i class="bi bi-star-fill"></i>
+            </div>
+            <div class="motto-accent-line"></div>
+            <p class="motto-accent-sub">Our Motto</p>
+            <p class="motto-accent-quote">"Excellence · Integrity · Service"</p>
+            <div class="motto-accent-words">
+                <span class="motto-word-badge"><i class="bi bi-trophy-fill"></i> Excellence</span>
+                <span class="motto-word-badge"><i class="bi bi-shield-fill-check"></i> Integrity</span>
+                <span class="motto-word-badge"><i class="bi bi-hand-heart-fill"></i> Service</span>
+            </div>
+        </div>
+        <div class="motto-content">
+            <h2>Three Words. One Purpose.</h2>
+            <p class="lead-text">
+                Since its founding, Siddhartha Secondary School has stood by three guiding
+                words — <strong>Excellence, Integrity, and Service</strong>. These are not merely
+                inscribed on our walls; they are lived, breathed, and practised every day
+                by every member of our school family.
+            </p>
+            <p>
+                Our motto serves as a compass for students navigating the challenges of
+                academic life and beyond. It reminds us of the standard we hold ourselves
+                to and the responsibility we carry towards each other and our community
+                in Sundar-Haraincha, Koshi Province.
+            </p>
+            <p>
+                Every lesson taught, every examination sat, and every act of kindness shown
+                on this campus is a reflection of these three words. They connect generations
+                of students and alumni in a shared identity — one we are proud to carry forward.
+            </p>
+        </div>
+    </div>
+
+    {# THREE PILLARS #}
+    <div class="pillars-section">
+        <div class="pillars-eyebrow">
+            <span>Breaking It Down</span>
+            <h2>The Three Pillars of Our Motto</h2>
+        </div>
+        <div class="pillars-grid">
+
+            <div class="pillar-card orange">
+                <div class="pillar-number">01</div>
+                <div class="pillar-icon-wrap"><i class="bi bi-trophy-fill"></i></div>
+                <h3>Excellence</h3>
+                <p>We pursue the highest standards in everything we do — in teaching, in learning, and in daily conduct. Excellence is not a destination; it is a habit we build together.</p>
+                <div class="pillar-traits">
+                    <div class="pillar-trait"><div class="trait-dot"></div> Rigorous NEB-aligned curriculum</div>
+                    <div class="pillar-trait"><div class="trait-dot"></div> High expectations for every student</div>
+                    <div class="pillar-trait"><div class="trait-dot"></div> Continuous improvement in teaching</div>
+                </div>
+            </div>
+
+            <div class="pillar-card blue">
+                <div class="pillar-number">02</div>
+                <div class="pillar-icon-wrap"><i class="bi bi-shield-fill-check"></i></div>
+                <h3>Integrity</h3>
+                <p>We act with honesty, transparency, and moral courage in all circumstances. Integrity builds the trust that holds our school community together.</p>
+                <div class="pillar-traits">
+                    <div class="pillar-trait"><div class="trait-dot"></div> Honesty in academics and conduct</div>
+                    <div class="pillar-trait"><div class="trait-dot"></div> Accountability for one's actions</div>
+                    <div class="pillar-trait"><div class="trait-dot"></div> Respect for rules and one another</div>
+                </div>
+            </div>
+
+            <div class="pillar-card gold">
+                <div class="pillar-number">03</div>
+                <div class="pillar-icon-wrap"><i class="bi bi-hand-heart-fill"></i></div>
+                <h3>Service</h3>
+                <p>We nurture a spirit of giving back — to classmates, to the school, and to the wider community. True education empowers students to contribute meaningfully beyond themselves.</p>
+                <div class="pillar-traits">
+                    <div class="pillar-trait"><div class="trait-dot"></div> Community outreach programmes</div>
+                    <div class="pillar-trait"><div class="trait-dot"></div> Peer support and mentorship</div>
+                    <div class="pillar-trait"><div class="trait-dot"></div> Leadership through volunteerism</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {# QUOTE STRIP #}
+    <div class="quote-strip">
+        <blockquote>
+            "We do not just teach students to pass examinations — we teach them to
+            <span>live with purpose, act with honour, and serve with joy.</span>"
+        </blockquote>
+        <cite>— Siddhartha Secondary School, Sundar-Haraincha</cite>
+    </div>
+
+    {# HOW WE LIVE IT #}
+    <div class="practices-section">
+        <div class="practices-eyebrow">
+            <span>In Practice</span>
+            <h2>How We Live the Motto Every Day</h2>
+        </div>
+        <div class="practices-grid">
+
+            <div class="practice-item">
+                <div class="practice-icon pi-orange"><i class="bi bi-mortarboard-fill"></i></div>
+                <div class="practice-text">
+                    <h4>Morning Assembly</h4>
+                    <p>Every school day begins with a reflection on our motto, reminding students of the values they carry into each class.</p>
+                </div>
+            </div>
+
+            <div class="practice-item">
+                <div class="practice-icon pi-blue"><i class="bi bi-people-fill"></i></div>
+                <div class="practice-text">
+                    <h4>Peer Mentorship</h4>
+                    <p>Senior students mentor juniors — practising service and building a culture of collaborative learning across all grades.</p>
+                </div>
+            </div>
+
+            <div class="practice-item">
+                <div class="practice-icon pi-teal"><i class="bi bi-journal-check"></i></div>
+                <div class="practice-text">
+                    <h4>Academic Honesty Policy</h4>
+                    <p>Our strict no-cheating policy upholds integrity in every examination, assignment, and classroom interaction.</p>
+                </div>
+            </div>
+
+            <div class="practice-item">
+                <div class="practice-icon pi-purple"><i class="bi bi-award-fill"></i></div>
+                <div class="practice-text">
+                    <h4>Excellence Awards</h4>
+                    <p>Students who consistently demonstrate all three pillars are recognised annually in our School Motto Honours ceremony.</p>
+                </div>
+            </div>
+
+            <div class="practice-item">
+                <div class="practice-icon pi-gold"><i class="bi bi-house-heart-fill"></i></div>
+                <div class="practice-text">
+                    <h4>Community Service Days</h4>
+                    <p>Twice each term, students participate in school-organised service drives in the Sundar-Haraincha community.</p>
+                </div>
+            </div>
+
+            <div class="practice-item">
+                <div class="practice-icon pi-rose"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+                <div class="practice-text">
+                    <h4>Character Report Cards</h4>
+                    <p>Alongside academic results, students receive a character assessment reflecting how they live Excellence, Integrity, and Service.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {# BANNER #}
+    <div class="motto-banner">
+        <div class="mb-text">
+            <h3>Become Part of Our Story</h3>
+            <p>Join a community where Excellence, Integrity, and Service are more than words — they are the foundation of everything we build together.</p>
+        </div>
+        <div class="mb-actions">
+            <a href="{% url 'contact' %}" class="mb-btn-white">
+                <i class="bi bi-chat-dots"></i> Contact Us
+            </a>
+            <a href="{% url 'about_introduction' %}" class="mb-btn-outline">
+                <i class="bi bi-arrow-left"></i> About Us
+            </a>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

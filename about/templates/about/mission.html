@@ -1,0 +1,610 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* =============================================
+   MISSION & VISION PAGE
+   Blue primary · Colorful accents · Vibrant feel
+============================================= */
+
+.mv-page { background: #f0f4ff; min-height: 100vh; padding: 64px 0 100px; }
+.mv-wrap  { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* ── BREADCRUMB ── */
+.mv-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: #8a96b8;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 52px;
+}
+.mv-breadcrumb a { color: #4a6fd4; text-decoration: none; transition: color 0.2s; }
+.mv-breadcrumb a:hover { color: #1a3a8f; }
+.mv-breadcrumb i { font-size: 0.55rem; color: #b8c4e0; }
+
+/* ── PAGE HEADING ── */
+.mv-heading {
+    text-align: center; margin-bottom: 72px;
+}
+
+.mv-page-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 14px;
+}
+.mv-page-label::before, .mv-page-label::after {
+    content: ''; display: block; width: 24px; height: 1.5px;
+    background: linear-gradient(to right, transparent, #4a6fd4);
+}
+.mv-page-label::after {
+    background: linear-gradient(to left, transparent, #4a6fd4);
+}
+
+.mv-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900; color: #0f1f5c;
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.5px;
+}
+.mv-heading h1 .accent-mission { color: #e05a2b; }
+.mv-heading h1 .accent-vision  { color: #4a6fd4; }
+.mv-heading h1 .amp { color: #b0bace; font-weight: 400; }
+
+.mv-heading p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem; color: #6a7a9e;
+    line-height: 1.75; margin: 0 auto;
+    max-width: 520px;
+}
+
+/* ══════════════════════════════════════════
+   MISSION SECTION
+══════════════════════════════════════════ */
+.mission-section {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 40px rgba(74,111,212,0.1);
+    margin-bottom: 28px;
+    border: 1px solid #dde8ff;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+}
+
+/* left accent panel */
+.mission-accent {
+    background: linear-gradient(160deg, #e05a2b 0%, #f5854a 40%, #f7a456 100%);
+    padding: 48px 36px;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 24px;
+    position: relative; overflow: hidden;
+}
+
+.mission-accent::before {
+    content: '';
+    position: absolute; bottom: -60px; right: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+}
+
+.mission-accent::after {
+    content: '';
+    position: absolute; top: -30px; left: -30px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+}
+
+.mission-big-icon {
+    font-size: 3.5rem; color: rgba(255,255,255,0.9);
+    position: relative; z-index: 1;
+}
+
+.mission-accent-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 900;
+    color: #fff; line-height: 1.1; margin: 0;
+    position: relative; z-index: 1;
+}
+
+.mission-accent-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; color: rgba(255,255,255,0.75);
+    font-weight: 500; margin: 0;
+    position: relative; z-index: 1;
+    text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+.mission-accent-line {
+    width: 40px; height: 3px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 2px;
+    position: relative; z-index: 1;
+}
+
+/* right content */
+.mission-content { padding: 44px 48px; }
+
+.mission-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700;
+    color: #0f1f5c; margin: 0 0 16px;
+}
+
+.mission-content .lead-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; color: #4a5568;
+    line-height: 1.85; margin: 0 0 28px;
+    font-weight: 500;
+}
+
+.mission-content p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; color: #6a7a8e;
+    line-height: 1.85; margin: 0 0 20px;
+}
+
+/* mission points */
+.mission-points { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+
+.mp-item {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+
+.mp-dot {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; flex-shrink: 0; margin-top: 1px;
+}
+.mp-dot.orange  { background: rgba(224,90,43,0.12);  color: #e05a2b; }
+.mp-dot.teal    { background: rgba(16,185,129,0.12);  color: #10b981; }
+.mp-dot.purple  { background: rgba(139,92,246,0.12);  color: #8b5cf6; }
+.mp-dot.blue    { background: rgba(59,130,246,0.12);  color: #3b82f6; }
+
+.mp-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem; color: #4a5568; line-height: 1.6;
+}
+.mp-text strong { color: #0f1f5c; font-weight: 600; }
+
+/* ══════════════════════════════════════════
+   VISION SECTION
+══════════════════════════════════════════ */
+.vision-section {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 40px rgba(74,111,212,0.1);
+    margin-bottom: 56px;
+    border: 1px solid #dde8ff;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+}
+
+/* right accent panel */
+.vision-content { padding: 44px 48px; }
+
+.vision-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700;
+    color: #0f1f5c; margin: 0 0 16px;
+}
+
+.vision-content .lead-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; color: #4a5568;
+    line-height: 1.85; margin: 0 0 28px;
+    font-weight: 500;
+}
+
+.vision-content p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; color: #6a7a8e;
+    line-height: 1.85; margin: 0 0 20px;
+}
+
+.vision-accent {
+    background: linear-gradient(160deg, #1a3a8f 0%, #2c54c9 50%, #4a6fd4 100%);
+    padding: 48px 36px;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 24px;
+    position: relative; overflow: hidden;
+}
+
+.vision-accent::before {
+    content: '';
+    position: absolute; top: -60px; left: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+}
+
+.vision-big-icon {
+    font-size: 3.5rem; color: rgba(255,255,255,0.9);
+    position: relative; z-index: 1;
+}
+
+.vision-accent-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 900;
+    color: #fff; line-height: 1.1; margin: 0;
+    position: relative; z-index: 1;
+}
+
+.vision-accent-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; color: rgba(255,255,255,0.7);
+    font-weight: 500; margin: 0;
+    position: relative; z-index: 1;
+    text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+.vision-accent-line {
+    width: 40px; height: 3px;
+    background: rgba(255,255,255,0.45);
+    border-radius: 2px;
+    position: relative; z-index: 1;
+}
+
+/* vision goals */
+.vision-goals { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+
+.vg-item {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+
+.vg-icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; flex-shrink: 0; margin-top: 1px;
+}
+.vg-icon.blue   { background: rgba(74,111,212,0.12);  color: #4a6fd4; }
+.vg-icon.rose   { background: rgba(244,63,94,0.12);   color: #f43f5e; }
+.vg-icon.amber  { background: rgba(245,158,11,0.12);  color: #f59e0b; }
+.vg-icon.green  { background: rgba(16,185,129,0.12);  color: #10b981; }
+
+.vg-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem; color: #4a5568; line-height: 1.6;
+}
+.vg-text strong { color: #0f1f5c; font-weight: 600; }
+
+/* ══════════════════════════════════════════
+   CORE VALUES STRIP
+══════════════════════════════════════════ */
+.values-section { margin-bottom: 56px; }
+
+.values-eyebrow {
+    text-align: center; margin-bottom: 36px;
+}
+.values-eyebrow span {
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+}
+.values-eyebrow h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 800;
+    color: #0f1f5c; margin: 8px 0 0;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.val-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 16px 24px;
+    text-align: center;
+    border: 1px solid #dde8ff;
+    box-shadow: 0 2px 16px rgba(74,111,212,0.07);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+.val-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 40px rgba(74,111,212,0.14);
+}
+
+.val-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin: 0 auto 14px;
+}
+.vi-orange  { background: linear-gradient(135deg, #ff7043, #ff9a3c); color: #fff; }
+.vi-blue    { background: linear-gradient(135deg, #3b82f6, #60a5fa); color: #fff; }
+.vi-green   { background: linear-gradient(135deg, #10b981, #34d399); color: #fff; }
+.vi-purple  { background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: #fff; }
+.vi-rose    { background: linear-gradient(135deg, #f43f5e, #fb7185); color: #fff; }
+
+.val-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem; font-weight: 700;
+    color: #0f1f5c; margin: 0 0 6px;
+}
+
+.val-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; color: #8a9ab8;
+    line-height: 1.5; margin: 0;
+}
+
+/* ══════════════════════════════════════════
+   COMMITMENT BANNER
+══════════════════════════════════════════ */
+.mv-banner {
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    border-radius: 22px;
+    padding: 52px 56px;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+}
+
+.mv-banner::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+}
+
+.mv-banner::after {
+    content: '';
+    position: absolute; bottom: -60px; left: 40%;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 70%);
+}
+
+.mvb-text { position: relative; z-index: 1; }
+
+.mvb-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 800; color: #fff;
+    margin: 0 0 10px; line-height: 1.2;
+}
+
+.mvb-text p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; color: rgba(255,255,255,0.6);
+    margin: 0; line-height: 1.65; max-width: 420px;
+}
+
+.mvb-actions {
+    display: flex; gap: 14px;
+    flex-wrap: wrap; flex-shrink: 0;
+    position: relative; z-index: 1;
+}
+
+.mvb-btn-white {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: #0f1f5c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 12px 24px; border-radius: 50px;
+    text-decoration: none; transition: all 0.2s;
+    white-space: nowrap;
+}
+.mvb-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #0f1f5c; }
+
+.mvb-btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 12px 24px; border-radius: 50px;
+    text-decoration: none; transition: all 0.2s;
+    white-space: nowrap;
+}
+.mvb-btn-outline:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+    .mission-section { grid-template-columns: 1fr; }
+    .vision-section  { grid-template-columns: 1fr; }
+    .vision-accent   { order: -1; }
+    .values-grid     { grid-template-columns: repeat(3, 1fr); }
+    .mv-banner       { padding: 36px 28px; }
+}
+@media (max-width: 580px) {
+    .values-grid  { grid-template-columns: 1fr 1fr; }
+    .mission-content, .vision-content { padding: 28px 24px; }
+    .mission-accent, .vision-accent   { padding: 32px 24px; }
+    .mv-page { padding: 44px 0 60px; }
+    .mvb-text h3 { font-size: 1.3rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mv-page">
+<div class="mv-wrap">
+
+    {# ── BREADCRUMB ── #}
+    <div class="mv-breadcrumb">
+        <a href="/">Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="#">About Us</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>Mission &amp; Vision</span>
+    </div>
+
+    {# ── PAGE HEADING ── #}
+    <div class="mv-heading">
+        <div class="mv-page-label">Our Purpose</div>
+        <h1>
+            Our <span class="accent-mission">Mission</span>
+            <span class="amp">&</span>
+            <span class="accent-vision">Vision</span>
+        </h1>
+        <p>
+            The values and aspirations that guide every decision we make at
+            Siddhartha Secondary School — from the classroom to the community.
+        </p>
+    </div>
+
+    
+    <div class="mission-section">
+
+        {# Left orange accent panel #}
+        <div class="mission-accent">
+            <div class="mission-big-icon">
+                <i class="bi bi-rocket-takeoff-fill"></i>
+            </div>
+            <div class="mission-accent-line"></div>
+            <p class="mission-accent-sub">Our Purpose</p>
+            <h2 class="mission-accent-title">Our<br>Mission</h2>
+        </div>
+
+        {# Right content #}
+        <div class="mission-content">
+            <h2>What We Do Every Day</h2>
+            <p class="lead-text">
+                To provide every student with a high-quality, inclusive education that
+                builds strong academic foundations, fosters critical thinking, and
+                develops the character needed to lead a purposeful life.
+            </p>
+            <p>
+                At Siddhartha Secondary School, our mission is more than a statement — it is
+                the daily commitment of every teacher, administrator, and staff member on
+                our campus. We believe that education is the most powerful tool for
+                transforming lives, and we pursue that belief with rigour and compassion
+                in equal measure.
+            </p>
+
+            <div class="mission-points">
+                <div class="mp-item">
+                    <div class="mp-dot orange"><i class="bi bi-mortarboard-fill"></i></div>
+                    <p class="mp-text"><strong>Academic Excellence</strong> — Deliver a rigorous NEB-aligned curriculum that prepares students for national examinations and higher education.</p>
+                </div>
+                <div class="mp-item">
+                    <div class="mp-dot teal"><i class="bi bi-heart-fill"></i></div>
+                    <p class="mp-text"><strong>Character Development</strong> — Nurture honesty, empathy, and responsibility so students grow into ethical citizens.</p>
+                </div>
+                <div class="mp-item">
+                    <div class="mp-dot purple"><i class="bi bi-people-fill"></i></div>
+                    <p class="mp-text"><strong>Inclusive Community</strong> — Welcome every student regardless of background and ensure equal access to learning opportunities.</p>
+                </div>
+                <div class="mp-item">
+                    <div class="mp-dot blue"><i class="bi bi-lightbulb-fill"></i></div>
+                    <p class="mp-text"><strong>Lifelong Learning</strong> — Inspire curiosity and a love for learning that extends far beyond graduation day.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="vision-section">
+
+        {# Left content #}
+        <div class="vision-content">
+            <h2>Where We Are Headed</h2>
+            <p class="lead-text">
+                To be the most trusted secondary school in Koshi Province — recognised for
+                academic excellence, holistic development, and producing graduates who
+                contribute meaningfully to society.
+            </p>
+            <p>
+                Our vision is to build an institution that stands as a beacon of learning in
+                eastern Nepal — one where innovation meets tradition, and where every graduate
+                leaves not just with a certificate, but with the confidence, skills, and values
+                to shape a better future.
+            </p>
+
+            <div class="vision-goals">
+                <div class="vg-item">
+                    <div class="vg-icon blue"><i class="bi bi-globe-asia-australia"></i></div>
+                    <p class="vg-text"><strong>Global Readiness</strong> — Equip students with skills that meet both national and international educational standards.</p>
+                </div>
+                <div class="vg-item">
+                    <div class="vg-icon rose"><i class="bi bi-star-fill"></i></div>
+                    <p class="vg-text"><strong>Regional Leadership</strong> — Become the first-choice school for families across Biratnagar and Koshi Province.</p>
+                </div>
+                <div class="vg-item">
+                    <div class="vg-icon amber"><i class="bi bi-cpu-fill"></i></div>
+                    <p class="vg-text"><strong>Technology Integration</strong> — Embrace modern tools and digital learning to prepare students for a technology-driven world.</p>
+                </div>
+                <div class="vg-item">
+                    <div class="vg-icon green"><i class="bi bi-tree-fill"></i></div>
+                    <p class="vg-text"><strong>Sustainable Future</strong> — Foster environmental awareness and social responsibility in every student.</p>
+                </div>
+            </div>
+        </div>
+
+        {# Right blue accent panel #}
+        <div class="vision-accent">
+            <div class="vision-big-icon">
+                <i class="bi bi-eye-fill"></i>
+            </div>
+            <div class="vision-accent-line"></div>
+            <p class="vision-accent-sub">Our Aspiration</p>
+            <h2 class="vision-accent-title">Our<br>Vision</h2>
+        </div>
+    </div>
+
+    
+    <div class="values-section">
+        <div class="values-eyebrow">
+            <span>What We Stand For</span>
+            <h2>Core Values</h2>
+        </div>
+
+        <div class="values-grid">
+            <div class="val-card">
+                <div class="val-icon vi-orange"><i class="bi bi-fire"></i></div>
+                <h3 class="val-name">Excellence</h3>
+                <p class="val-desc">We pursue the highest standard in everything we do — in teaching, learning, and conduct.</p>
+            </div>
+            <div class="val-card">
+                <div class="val-icon vi-blue"><i class="bi bi-shield-fill-check"></i></div>
+                <h3 class="val-name">Integrity</h3>
+                <p class="val-desc">We act with honesty and transparency, earning the trust of students, parents, and the community.</p>
+            </div>
+            <div class="val-card">
+                <div class="val-icon vi-green"><i class="bi bi-hand-thumbs-up-fill"></i></div>
+                <h3 class="val-name">Service</h3>
+                <p class="val-desc">We are committed to contributing to the growth and well-being of society beyond our walls.</p>
+            </div>
+            <div class="val-card">
+                <div class="val-icon vi-purple"><i class="bi bi-patch-question-fill"></i></div>
+                <h3 class="val-name">Curiosity</h3>
+                <p class="val-desc">We encourage questions, exploration, and a lifelong love of discovering new ideas.</p>
+            </div>
+            <div class="val-card">
+                <div class="val-icon vi-rose"><i class="bi bi-emoji-heart-eyes-fill"></i></div>
+                <h3 class="val-name">Respect</h3>
+                <p class="val-desc">We honour every individual — their story, culture, and potential — with dignity and kindness.</p>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="mv-banner">
+        <div class="mvb-text">
+            <h3>Become Part of Our Story</h3>
+            <p>
+                Join a community of learners, educators, and achievers who share a common
+                belief — that education has the power to change everything.
+            </p>
+        </div>
+        <div class="mvb-actions">
+            <a href="{% url 'contact' %}" class="mvb-btn-white">
+                <i class="bi bi-chat-dots"></i> Contact Us
+            </a>
+            <a href="{% url 'about_introduction' %}" class="mvb-btn-outline">
+                <i class="bi bi-arrow-left"></i> About Us
+            </a>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

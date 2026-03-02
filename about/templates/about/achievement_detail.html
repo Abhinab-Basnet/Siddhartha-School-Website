@@ -1,0 +1,347 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* =============================================
+   ACHIEVEMENT DETAIL PAGE
+============================================= */
+
+.achd-page { background: #f0f4ff; min-height: 100vh; padding: 0 0 100px; }
+.achd-wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* ── HERO BANNER ── */
+.achd-hero {
+    position: relative; overflow: hidden;
+    height: 380px; margin-bottom: 0;
+}
+.achd-hero-img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+}
+.achd-hero-fallback {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    display: flex; align-items: center; justify-content: center;
+}
+.achd-hero-fallback i { font-size: 5rem; color: rgba(255,255,255,0.15); }
+
+/* Dark overlay */
+.achd-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top,
+        rgba(15,31,92,0.88) 0%,
+        rgba(15,31,92,0.45) 45%,
+        rgba(15,31,92,0.15) 100%);
+}
+
+/* Content sitting on top of hero */
+.achd-hero-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 32px 40px 36px;
+}
+.achd-hero-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,0.55);
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 14px;
+}
+.achd-hero-breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+.achd-hero-breadcrumb a:hover { color: #fff; }
+.achd-hero-breadcrumb i { font-size: 0.5rem; }
+
+.achd-hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 900; color: #fff;
+    margin: 0 0 12px; line-height: 1.1; letter-spacing: -0.3px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.achd-hero-meta {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+}
+.achd-meta-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 50px; padding: 5px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; font-weight: 600; color: #fff;
+}
+
+/* ── MAIN CONTENT AREA ── */
+.achd-main {
+    padding-top: 48px;
+}
+
+/* Section heading */
+.achd-section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 32px; flex-wrap: wrap; gap: 14px;
+}
+.achd-section-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 3px;
+    color: #4a6fd4; font-family: 'DM Sans', sans-serif; font-weight: 700;
+}
+.achd-section-label::before {
+    content: ''; display: block; width: 24px; height: 1.5px;
+    background: linear-gradient(to right, transparent, #4a6fd4);
+}
+.achd-section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 800; color: #0f1f5c; margin: 4px 0 0;
+}
+.achd-back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: #4a6fd4;
+    border: 1.5px solid #dde8ff;
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 9px 20px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s;
+}
+.achd-back-btn:hover { background: #f0f4ff; border-color: #4a6fd4; color: #0f1f5c; }
+
+/* ── ITEMS GRID ── */
+.achd-items-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 64px;
+}
+
+.achd-item-card {
+    background: #fff; border-radius: 18px; overflow: hidden;
+    border: 1px solid #dde8ff;
+    box-shadow: 0 3px 20px rgba(74,111,212,0.08);
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s;
+}
+.achd-item-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 18px 48px rgba(74,111,212,0.16);
+}
+
+/* Item image */
+.achd-item-img-wrap {
+    position: relative; height: 200px; overflow: hidden;
+}
+.achd-item-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.45s ease;
+}
+.achd-item-card:hover .achd-item-img-wrap img {
+    transform: scale(1.07);
+}
+.achd-item-img-wrap .img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(15,31,92,0.55) 0%, transparent 55%);
+    opacity: 0; transition: opacity 0.3s;
+}
+.achd-item-card:hover .img-overlay { opacity: 1; }
+
+/* Colour accent bar — cycles through 5 colours */
+.achd-item-card:nth-child(5n+1) .achd-item-bar { background: linear-gradient(to right, #1a3a8f, #4a6fd4); }
+.achd-item-card:nth-child(5n+2) .achd-item-bar { background: linear-gradient(to right, #e05a2b, #f7a456); }
+.achd-item-card:nth-child(5n+3) .achd-item-bar { background: linear-gradient(to right, #10b981, #34d399); }
+.achd-item-card:nth-child(5n+4) .achd-item-bar { background: linear-gradient(to right, #c9a84c, #f7d878); }
+.achd-item-card:nth-child(5n+0) .achd-item-bar { background: linear-gradient(to right, #8b5cf6, #a78bfa); }
+.achd-item-bar { height: 3px; }
+
+/* Item body */
+.achd-item-body { padding: 20px 22px 22px; }
+.achd-item-body h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 800;
+    color: #0f1f5c; margin: 0 0 8px; line-height: 1.3;
+}
+.achd-item-body p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; color: #6a7a8e;
+    line-height: 1.7; margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* No image fallback */
+.achd-item-no-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+}
+.achd-item-card:nth-child(5n+1) .achd-item-no-img { background: linear-gradient(135deg, #1a3a8f, #4a6fd4); }
+.achd-item-card:nth-child(5n+2) .achd-item-no-img { background: linear-gradient(135deg, #c96000, #f7a456); }
+.achd-item-card:nth-child(5n+3) .achd-item-no-img { background: linear-gradient(135deg, #059669, #34d399); }
+.achd-item-card:nth-child(5n+4) .achd-item-no-img { background: linear-gradient(135deg, #a07830, #f7d878); }
+.achd-item-card:nth-child(5n+0) .achd-item-no-img { background: linear-gradient(135deg, #6d28d9, #a78bfa); }
+.achd-item-no-img i { font-size: 2.5rem; color: rgba(255,255,255,0.3); }
+
+/* ── EMPTY STATE ── */
+.achd-empty {
+    text-align: center; padding: 80px 40px;
+    background: #fff; border-radius: 20px; border: 1px solid #dde8ff;
+    grid-column: 1 / -1;
+}
+.achd-empty i { font-size: 3rem; color: #c0cae8; display: block; margin-bottom: 18px; }
+.achd-empty h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #0f1f5c; margin: 0 0 8px; }
+.achd-empty p  { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #8a9ab8; }
+
+/* ── BANNER ── */
+.achd-banner {
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    border-radius: 22px; padding: 52px 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap; position: relative; overflow: hidden;
+}
+.achd-banner::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+}
+.adb-text { position: relative; z-index: 1; }
+.adb-text h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin: 0 0 10px; }
+.adb-text p  { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.65; max-width: 420px; }
+.adb-actions { display: flex; gap: 14px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 1; }
+.adb-btn-white {
+    display: inline-flex; align-items: center; gap: 8px; background: #fff; color: #0f1f5c;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.adb-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #0f1f5c; }
+.adb-btn-outline {
+    display: inline-flex; align-items: center; gap: 8px; background: transparent;
+    color: rgba(255,255,255,0.85); border: 1.5px solid rgba(255,255,255,0.3);
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.adb-btn-outline:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+    .achd-items-grid { grid-template-columns: repeat(2, 1fr); }
+    .achd-hero { height: 300px; }
+    .achd-banner { padding: 36px 28px; }
+}
+@media (max-width: 600px) {
+    .achd-items-grid { grid-template-columns: 1fr; }
+    .achd-hero { height: 260px; }
+    .achd-hero-content { padding: 20px 20px 24px; }
+    .achd-page { padding: 0 0 60px; }
+    .achd-wrap { padding: 0 16px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="achd-page">
+
+    {# HERO BANNER #}
+    <div class="achd-hero">
+        {% if category.cover_image %}
+            <img class="achd-hero-img" src="{{ category.cover_image.url }}" alt="{{ category.title }}"/>
+        {% else %}
+            <div class="achd-hero-fallback">
+                <i class="bi bi-trophy-fill"></i>
+            </div>
+        {% endif %}
+        <div class="achd-hero-overlay"></div>
+
+        <div class="achd-hero-content">
+            <div class="achd-hero-breadcrumb">
+                <a href="/">Home</a>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'achievement_list' %}">Achievements</a>
+                <i class="bi bi-chevron-right"></i>
+                <span>{{ category.title }}</span>
+            </div>
+            <div class="achd-hero-title">{{ category.title }}</div>
+            <div class="achd-hero-meta">
+                <span class="achd-meta-pill">
+                    <i class="bi bi-award-fill"></i> {{ items|length }} Achievement{{ items|length|pluralize }}
+                </span>
+                <span class="achd-meta-pill">
+                    <i class="bi bi-calendar3"></i> {{ category.created_at|date:"F Y" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="achd-wrap">
+    <div class="achd-main">
+
+        {# SECTION HEADER #}
+        <div class="achd-section-head">
+            <div>
+                <div class="achd-section-label">
+                    <span>All Achievements</span>
+                </div>
+                <h2>{{ category.title }}</h2>
+            </div>
+            <a href="{% url 'achievement_list' %}" class="achd-back-btn">
+                <i class="bi bi-arrow-left"></i> Back to All
+            </a>
+        </div>
+
+        {# ITEMS GRID #}
+        <div class="achd-items-grid">
+            {% if items %}
+                {% for item in items %}
+                <div class="achd-item-card">
+
+                    <div class="achd-item-img-wrap">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.title }}"/>
+                            <div class="img-overlay"></div>
+                        {% else %}
+                            <div class="achd-item-no-img">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="achd-item-bar"></div>
+
+                    <div class="achd-item-body">
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.description }}</p>
+                    </div>
+
+                </div>
+                {% endfor %}
+
+            {% else %}
+                <div class="achd-empty">
+                    <i class="bi bi-trophy"></i>
+                    <h3>No Achievements Added Yet</h3>
+                    <p>Achievements for this category will appear here once added through the admin panel.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        {# BANNER #}
+        <div class="achd-banner">
+            <div class="adb-text">
+                <h3>Celebrating Every Victory</h3>
+                <p>Each achievement here represents hours of effort, dedication, and the spirit that defines Siddhartha Secondary School.</p>
+            </div>
+            <div class="adb-actions">
+                <a href="{% url 'achievement_list' %}" class="adb-btn-white">
+                    <i class="bi bi-trophy"></i> All Categories
+                </a>
+                <a href="{% url 'contact' %}" class="adb-btn-outline">
+                    <i class="bi bi-chat-dots"></i> Contact Us
+                </a>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+</div>
+{% endblock %}

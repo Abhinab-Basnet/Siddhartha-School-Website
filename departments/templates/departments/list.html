@@ -1,22 +1,261 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   DEPARTMENT LIST PAGE
+   Navy primary · clean academic aesthetic
+============================================= */
+
+.dept-page { background: #f2f5f9; min-height: 100vh; padding: 60px 0 80px; }
+.dept-wrap  { max-width: 1260px; margin: 0 auto; padding: 0 28px; }
+
+/* ── HEADING ── */
+.dept-heading { margin-bottom: 52px; }
+
+.d-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #5a7a9a;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 10px;
+}
+.d-label::before, .d-label::after {
+    content: ''; display: block; width: 20px; height: 1px; background: #b0bac8;
+}
+
+.dept-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 900; color: #0a1628;
+    line-height: 1.1; margin: 0 0 10px; letter-spacing: -0.3px;
+}
+.dept-heading h1 span { color: #3b6ea5; }
+
+.dept-heading p {
+    font-size: 0.88rem; color: #7a8a9e;
+    font-family: 'DM Sans', sans-serif;
+    max-width: 460px; line-height: 1.65; margin: 0;
+}
+
+/* ── GRID ── */
+.dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+/* ── CARD ── */
+.dept-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #e4eaf2;
+    box-shadow: 0 2px 16px rgba(10,22,40,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    display: flex; flex-direction: column;
+
+    opacity: 0; transform: translateY(18px);
+    animation: dcIn 0.5s ease forwards;
+}
+.dept-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 48px rgba(10,22,40,0.13);
+    border-color: #c8d4e4;
+}
+@keyframes dcIn { to { opacity: 1; transform: translateY(0); } }
+.dept-card:nth-child(1) { animation-delay: 0.05s; }
+.dept-card:nth-child(2) { animation-delay: 0.10s; }
+.dept-card:nth-child(3) { animation-delay: 0.15s; }
+.dept-card:nth-child(4) { animation-delay: 0.20s; }
+.dept-card:nth-child(5) { animation-delay: 0.25s; }
+.dept-card:nth-child(6) { animation-delay: 0.30s; }
+
+/* cover */
+.dept-cover {
+    position: relative; height: 200px;
+    overflow: hidden; background: #dde4ee;
+}
+.dept-cover img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.5s ease;
+}
+.dept-card:hover .dept-cover img { transform: scale(1.06); }
+
+/* gradient overlay */
+.dept-cover-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,22,40,0.6) 0%, transparent 55%);
+}
+
+/* dept number badge */
+.dept-num {
+    position: absolute; top: 14px; left: 14px;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(10,22,40,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem; font-weight: 700; color: #fff;
+}
+
+/* HOD name over image */
+.dept-hod-overlay {
+    position: absolute; bottom: 12px; left: 14px; right: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.dept-hod-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #4ade80; flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(74,222,128,0.3);
+}
+.dept-hod-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* no cover fallback */
+.dept-no-cover {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0e2040, #1a3a6e);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+    color: rgba(255,255,255,0.25);
+}
+.dept-no-cover i { font-size: 2.5rem; }
+
+/* body */
+.dept-body {
+    padding: 22px 24px 24px;
+    flex: 1; display: flex; flex-direction: column;
+}
+
+.dept-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: #0a1628; margin: 0 0 8px; line-height: 1.3;
+}
+
+.dept-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; color: #7a8a9e;
+    line-height: 1.6; margin: 0; flex: 1;
+}
+
+.dept-footer {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid #eef2f8;
+}
+
+.dept-explore {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.77rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: #0a1628; text-decoration: none;
+    transition: gap 0.2s;
+}
+.dept-card:hover .dept-explore { gap: 11px; }
+.dept-explore i { font-size: 0.7rem; }
+
+.dept-arrow {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #f0f4f9; color: #0a1628;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; transition: all 0.2s;
+}
+.dept-card:hover .dept-arrow { background: #0a1628; color: #fff; }
+
+/* ── EMPTY STATE ── */
+.dept-empty {
+    grid-column: 1 / -1; text-align: center;
+    padding: 80px 24px; background: #fff;
+    border-radius: 16px; border: 1px dashed #cdd5e0;
+}
+.dept-empty i { font-size: 3rem; color: #c0ccd8; display: block; margin-bottom: 16px; }
+.dept-empty h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #0a1628; margin-bottom: 8px; }
+.dept-empty p  { font-size: 0.85rem; color: #8a96a3; margin: 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+    .dept-grid { grid-template-columns: 1fr; gap: 16px; }
+    .dept-page { padding: 40px 0 60px; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5 fw-bold">Our Academic Departments</h1>
-    <div class="row">
+<div class="dept-page">
+<div class="dept-wrap">
+
+    {# ── HEADING ── #}
+    <div class="dept-heading">
+        <div class="d-label">Our Divisions</div>
+        <h1>Academic <span>Departments</span></h1>
+        <p>Explore the diverse departments that make up the academic heart of Siddhartha Secondary School.</p>
+    </div>
+
+    {# ── GRID ── #}
+    <div class="dept-grid">
+
         {% for dept in departments %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow">
-                <img src="{{ dept.cover_image.url }}" class="card-img-top" alt="{{ dept.name }}" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h4 class="card-title fw-bold text-primary">{{ dept.name }}</h4>
-                    <p class="text-muted small"><strong>HOD:</strong> {{ dept.hod_name }}</p>
-                    <p class="card-text">{{ dept.description|truncatewords:15 }}</p>
-                    <a href="{% url 'dept_detail' dept.slug %}" class="btn btn-primary">Explore Department</a>
+        <div class="dept-card">
+
+            {# Cover #}
+            <div class="dept-cover">
+                {% if dept.cover_image %}
+                    <img src="{{ dept.cover_image.url }}" alt="{{ dept.name }}" loading="lazy">
+                {% else %}
+                    <div class="dept-no-cover">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                {% endif %}
+
+                <div class="dept-cover-overlay"></div>
+
+                {# Number badge #}
+                <div class="dept-num">{{ forloop.counter }}</div>
+
+                {# HOD line over image #}
+                <div class="dept-hod-overlay">
+                    <div class="dept-hod-dot"></div>
+                    <span class="dept-hod-name">HOD: {{ dept.hod_name }}</span>
                 </div>
             </div>
+
+            {# Body #}
+            <div class="dept-body">
+                <h2 class="dept-name">{{ dept.name }}</h2>
+                <p class="dept-desc">{{ dept.description|truncatewords:18 }}</p>
+
+                <div class="dept-footer">
+                    <a href="{% url 'dept_detail' dept.slug %}" class="dept-explore">
+                        Explore <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a href="{% url 'dept_detail' dept.slug %}" class="dept-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="dept-empty">
+            <i class="bi bi-diagram-3"></i>
+            <h3>No Departments Added Yet</h3>
+            <p>Department information will appear here once added to the system.</p>
         </div>
         {% endfor %}
+
     </div>
+
+</div>
 </div>
 {% endblock %}

@@ -1,0 +1,614 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   SCHOOL PRAYER PAGE
+   Serene · Spiritual · Warm color palette
+   Fully mobile responsive
+============================================= */
+
+.prayer-page { background: #fdf6ee; min-height: 100vh; padding: 64px 0 100px; }
+.prayer-wrap { max-width: 960px; margin: 0 auto; padding: 0 28px; }
+
+/* ── BREADCRUMB ── */
+.prayer-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: #9a8a7a;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 48px;
+}
+.prayer-breadcrumb a { color: #b07d3a; text-decoration: none; transition: color 0.2s; }
+.prayer-breadcrumb a:hover { color: #7a4f1a; }
+.prayer-breadcrumb i { font-size: 0.55rem; color: #d4c0a0; }
+
+/* ── PAGE HEADING ── */
+.prayer-heading {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+.prayer-top-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f5a623, #e07b2b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.prayer-page-label {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #b07d3a;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 14px;
+}
+.prayer-page-label::before, .prayer-page-label::after {
+    content: ''; display: block; width: 28px; height: 1.5px;
+    background: linear-gradient(to right, transparent, #d4a050);
+}
+.prayer-page-label::after {
+    background: linear-gradient(to left, transparent, #d4a050);
+}
+
+.prayer-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900; color: #3a2010;
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.4px;
+}
+.prayer-heading h1 .morning-word { color: #e07b2b; }
+.prayer-heading h1 .evening-word { color: #5a3db8; }
+
+.prayer-heading p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: #8a7060;
+    line-height: 1.75; margin: 0 auto;
+    max-width: 480px;
+}
+
+/* ── NAV TABS ── */
+.prayer-tabs {
+    display: flex; justify-content: center; gap: 12px;
+    margin-bottom: 48px;
+}
+
+.ptab {
+    display: flex; align-items: center; gap: 9px;
+    padding: 11px 28px; border-radius: 50px;
+    border: 2px solid transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    cursor: pointer; transition: all 0.25s;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.ptab-morning {
+    border-color: #f5a623;
+    color: #b07d3a;
+}
+.ptab-morning.active,
+.ptab-morning:hover {
+    background: linear-gradient(135deg, #f5a623, #e07b2b);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(240,130,50,0.35);
+}
+
+.ptab-evening {
+    border-color: #7c5cbf;
+    color: #5a3db8;
+}
+.ptab-evening.active,
+.ptab-evening:hover {
+    background: linear-gradient(135deg, #7c5cbf, #5a3db8);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(100,70,200,0.3);
+}
+
+/* ── PRAYER PANELS ── */
+.prayer-panel { display: none; }
+.prayer-panel.active { display: block; }
+
+/* ── MORNING PRAYER CARD ── */
+.morning-card {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 48px rgba(240,130,50,0.12);
+    border: 1px solid #fde8c8;
+    margin-bottom: 24px;
+}
+
+.morning-header {
+    background: linear-gradient(135deg, #f5a623 0%, #e07b2b 60%, #d4552a 100%);
+    padding: 40px 48px 36px;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 24px;
+}
+
+.morning-header::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+}
+.morning-header::after {
+    content: '';
+    position: absolute; bottom: -40px; left: 30%;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+}
+
+.mh-icon {
+    font-size: 3.2rem; color: rgba(255,255,255,0.9);
+    flex-shrink: 0; position: relative; z-index: 1;
+}
+
+.mh-text { position: relative; z-index: 1; }
+.mh-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 900;
+    color: #fff; margin: 0 0 6px;
+}
+.mh-text p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; color: rgba(255,255,255,0.75);
+    text-transform: uppercase; letter-spacing: 2px;
+    font-weight: 600; margin: 0;
+}
+
+/* prayer body */
+.prayer-body { padding: 44px 48px; }
+
+.prayer-lang-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 2.5px; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 20px;
+    font-family: 'DM Sans', sans-serif;
+}
+.lang-nepali  { background: rgba(220,60,50,0.1);  color: #dc3c32; }
+.lang-english { background: rgba(74,111,212,0.1);  color: #4a6fd4; }
+
+/* prayer lines */
+.prayer-lines {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; color: #3a2a1a;
+    line-height: 2.2;
+    margin: 0 0 36px;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #fffbf5, #fff8ee);
+    border-radius: 16px;
+    border-left: 4px solid #f5a623;
+    white-space: pre-line;
+}
+
+.prayer-divider {
+    display: flex; align-items: center; gap: 16px;
+    margin: 28px 0;
+}
+.prayer-divider-line { flex: 1; height: 1px; background: #f0e4d0; }
+.prayer-divider-icon { color: #d4a050; font-size: 1rem; }
+
+/* translation */
+.prayer-translation {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; color: #6a5848;
+    line-height: 1.95;
+    margin: 0;
+    padding: 24px 28px;
+    background: #faf7f3;
+    border-radius: 14px;
+    border-left: 4px solid #4a6fd4;
+    font-style: italic;
+    white-space: pre-line;
+}
+
+/* ── EVENING PRAYER CARD ── */
+.evening-card {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 48px rgba(100,70,200,0.12);
+    border: 1px solid #e8e0f8;
+    margin-bottom: 24px;
+}
+
+.evening-header {
+    background: linear-gradient(135deg, #2d1b69 0%, #5a3db8 55%, #7c5cbf 100%);
+    padding: 40px 48px 36px;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 24px;
+}
+.evening-header::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+}
+
+.eh-icon {
+    font-size: 3.2rem; color: rgba(255,255,255,0.9);
+    flex-shrink: 0; position: relative; z-index: 1;
+}
+.eh-text { position: relative; z-index: 1; }
+.eh-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 900;
+    color: #fff; margin: 0 0 6px;
+}
+.eh-text p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; color: rgba(255,255,255,0.7);
+    text-transform: uppercase; letter-spacing: 2px;
+    font-weight: 600; margin: 0;
+}
+
+.prayer-lines-evening {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; color: #2a1a3a;
+    line-height: 2.2;
+    margin: 0 0 36px;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #f8f5ff, #f3eeff);
+    border-radius: 16px;
+    border-left: 4px solid #7c5cbf;
+    white-space: pre-line;
+}
+
+.prayer-translation-evening {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; color: #5a4a6a;
+    line-height: 1.95;
+    margin: 0;
+    padding: 24px 28px;
+    background: #faf8ff;
+    border-radius: 14px;
+    border-left: 4px solid #e05a8a;
+    font-style: italic;
+    white-space: pre-line;
+}
+
+/* ── NOTE CARD ── */
+.prayer-note {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px 28px;
+    border: 1px solid #f0e4d0;
+    display: flex; align-items: flex-start; gap: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.prayer-note-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+}
+.pni-morning { background: rgba(245,166,35,0.12); color: #e07b2b; }
+.pni-evening { background: rgba(124,92,191,0.12); color: #7c5cbf; }
+
+.prayer-note-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; color: #7a6a5a; line-height: 1.65;
+}
+.prayer-note-text strong { color: #3a2a1a; font-weight: 600; }
+
+/* ── BOTTOM BANNER ── */
+.prayer-banner {
+    margin-top: 56px;
+    background: linear-gradient(135deg, #3a2010 0%, #7a4020 50%, #b07d3a 100%);
+    border-radius: 22px;
+    padding: 44px 52px;
+    text-align: center;
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(100,50,10,0.2);
+}
+.prayer-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.prayer-banner h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 800; color: #fff;
+    margin: 0 0 10px; position: relative; z-index: 1;
+}
+.prayer-banner p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; color: rgba(255,255,255,0.6);
+    margin: 0 auto 24px; max-width: 400px;
+    line-height: 1.65; position: relative; z-index: 1;
+}
+.prayer-banner-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    color: #fff; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 11px 24px; text-decoration: none;
+    transition: all 0.2s; position: relative; z-index: 1;
+}
+.prayer-banner-btn:hover {
+    background: rgba(255,255,255,0.25); color: #fff;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 700px) {
+    .morning-header,
+    .evening-header { padding: 28px 24px; gap: 16px; }
+    .mh-icon, .eh-icon { font-size: 2.4rem; }
+    .mh-text h2, .eh-text h2 { font-size: 1.5rem; }
+
+    .prayer-body  { padding: 28px 24px; }
+    .prayer-lines,
+    .prayer-lines-evening { padding: 20px 20px; font-size: 0.95rem; }
+    .prayer-translation,
+    .prayer-translation-evening { padding: 18px 20px; font-size: 0.83rem; }
+
+    .prayer-tabs  { flex-direction: column; align-items: center; }
+    .ptab         { width: 100%; max-width: 320px; justify-content: center; }
+
+    .prayer-banner { padding: 32px 24px; }
+    .prayer-page { padding: 40px 0 60px; }
+    .prayer-wrap { padding: 0 16px; }
+}
+
+@media (max-width: 420px) {
+    .morning-header,
+    .evening-header { flex-direction: column; text-align: center; }
+    .prayer-lines,
+    .prayer-lines-evening { font-size: 0.88rem; line-height: 2; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="prayer-page">
+<div class="prayer-wrap">
+
+    {# ── BREADCRUMB ── #}
+    <div class="prayer-breadcrumb">
+        <a href="/">Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="#">About Us</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>School Prayer</span>
+    </div>
+
+    {# ── HEADING ── #}
+    <div class="prayer-heading">
+        <i class="bi bi-brilliance prayer-top-icon"></i>
+        <div class="prayer-page-label">Spiritual Foundation</div>
+        <h1>
+            <span class="morning-word">Morning</span>
+            &amp;
+            <span class="evening-word">Evening</span>
+            Prayer
+        </h1>
+        <p>
+            The prayers that unite us each day — spoken together, felt sincerely,
+            and carried forward as a reminder of our values and our purpose.
+        </p>
+    </div>
+
+    {# ── TABS ── #}
+    <div class="prayer-tabs">
+        <button class="ptab ptab-morning active" data-prayer="morning">
+            <i class="bi bi-sun-fill"></i> Morning Prayer
+        </button>
+        <button class="ptab ptab-evening" data-prayer="evening">
+            <i class="bi bi-moon-stars-fill"></i> Evening Prayer
+        </button>
+    </div>
+
+    
+    <div class="prayer-panel active" id="panel-morning">
+
+        <div class="morning-card">
+
+            <div class="morning-header">
+                <div class="mh-icon"><i class="bi bi-sun-fill"></i></div>
+                <div class="mh-text">
+                    <h2>Morning Prayer</h2>
+                    <p>Recited every morning before classes begin</p>
+                </div>
+            </div>
+
+            <div class="prayer-body">
+
+                {# Nepali / Original #}
+                <div class="prayer-lang-label lang-nepali">
+                    <i class="bi bi-translate" style="font-size:.7rem;"></i>
+                    Original — Nepali
+                </div>
+
+                <div class="prayer-lines">हे परमेश्वर, हाम्रो जीवनको प्रकाश,
+आज हामीलाई बुद्धि र विवेक प्रदान गर्नुस्।
+हाम्रो मनलाई ज्ञानको पथमा अग्रसर गराउनुस्,
+र हामीलाई सत्य, न्याय र करुणाको मार्गमा चलाउनुस्।
+
+हाम्रा शिक्षकहरूलाई आशिष् दिनुस्,
+जसले हामीलाई ज्ञानको किरण देखाउँछन्।
+हाम्रा अभिभावकहरूलाई बल दिनुस्,
+जसले हामीलाई यहाँसम्म पुर्‍याएका छन्।
+
+आजको दिन हामीलाई एकता, सद्भाव र परिश्रममा राख्नुस्।
+हाम्रो विद्यालयलाई ज्ञान र संस्कारको मन्दिर बनाउनुस्।
+                </div>
+
+                <div class="prayer-divider">
+                    <div class="prayer-divider-line"></div>
+                    <i class="bi bi-flower1 prayer-divider-icon"></i>
+                    <div class="prayer-divider-line"></div>
+                </div>
+
+                {# English translation #}
+                <div class="prayer-lang-label lang-english">
+                    <i class="bi bi-translate" style="font-size:.7rem;"></i>
+                    Translation — English
+                </div>
+
+                <div class="prayer-translation">O Lord, the light of our lives,
+Grant us wisdom and discernment today.
+Lead our minds on the path of knowledge,
+And guide us in the way of truth, justice, and compassion.
+
+Bless our teachers,
+Who show us the rays of enlightenment.
+Strengthen our parents,
+Who have brought us to this place.
+
+Keep us in unity, harmony, and diligence throughout this day.
+Make our school a temple of knowledge and good values.
+                </div>
+
+            </div>
+        </div>
+
+        <div class="prayer-note">
+            <div class="prayer-note-icon pni-morning"><i class="bi bi-info-circle-fill"></i></div>
+            <p class="prayer-note-text">
+                <strong>Note:</strong> The morning prayer is recited by all students and staff at
+                the beginning of the school day during the assembly. Students are encouraged to
+                reflect on its meaning as they begin their day of learning.
+                <br><br>
+                <em>You can replace this text with your actual school prayer once ready.</em>
+            </p>
+        </div>
+
+    </div>
+
+    
+    <div class="prayer-panel" id="panel-evening">
+
+        <div class="evening-card">
+
+            <div class="evening-header">
+                <div class="eh-icon"><i class="bi bi-moon-stars-fill"></i></div>
+                <div class="eh-text">
+                    <h2>Evening Prayer</h2>
+                    <p>Recited at the close of the school day</p>
+                </div>
+            </div>
+
+            <div class="prayer-body">
+
+                {# Nepali / Original #}
+                <div class="prayer-lang-label lang-nepali">
+                    <i class="bi bi-translate" style="font-size:.7rem;"></i>
+                    Original — Nepali
+                </div>
+
+                <div class="prayer-lines-evening">हे प्रभु, आजको दिन तपाईंको कृपाले बिताएकोमा धन्यवाद।
+हामीलाई आज जे सिक्न पाइयो, त्यो ज्ञान जीवनमा उपयोग गर्ने शक्ति दिनुस्।
+
+हाम्रा गल्तीहरूलाई क्षमा गर्नुस्,
+र हामीलाई भोलि थप राम्रो बन्ने प्रेरणा दिनुस्।
+हाम्रो परिवार र साथीभाइलाई सुरक्षित राख्नुस्।
+
+रातभर हाम्रो मनमा शान्ति र चित्तमा स्थिरता दिनुस्,
+ताकि भोलि हामी नयाँ ऊर्जा र उत्साहका साथ फर्कन सकौँ।
+सबैको भलाइ होस्, सबैमा प्रेम र मैत्री रहोस्।
+                </div>
+
+                <div class="prayer-divider">
+                    <div class="prayer-divider-line" style="background:#e0d4f8;"></div>
+                    <i class="bi bi-stars prayer-divider-icon" style="color:#a07cdf;"></i>
+                    <div class="prayer-divider-line" style="background:#e0d4f8;"></div>
+                </div>
+
+                {# English translation #}
+                <div class="prayer-lang-label lang-english">
+                    <i class="bi bi-translate" style="font-size:.7rem;"></i>
+                    Translation — English
+                </div>
+
+                <div class="prayer-translation-evening">O Lord, thank you for this day spent in your grace.
+Give us the strength to use the knowledge we gained today throughout our lives.
+
+Forgive us our mistakes,
+And inspire us to be better tomorrow.
+Keep our families and friends safe.
+
+Grant us peace in our hearts and stillness in our minds through the night,
+So that we may return tomorrow with fresh energy and enthusiasm.
+May all be well, may love and friendship dwell in all.
+                </div>
+
+            </div>
+        </div>
+
+        <div class="prayer-note">
+            <div class="prayer-note-icon pni-evening"><i class="bi bi-info-circle-fill"></i></div>
+            <p class="prayer-note-text">
+                <strong>Note:</strong> The evening prayer is recited by all students and staff
+                before dispersal at the end of the school day. It is a moment to reflect on the
+                day's learnings and express gratitude.
+                <br><br>
+                <em>You can replace this text with your actual school prayer once ready.</em>
+            </p>
+        </div>
+
+    </div>
+
+    {# ── BOTTOM BANNER ── #}
+    <div class="prayer-banner">
+        <h3>United in Spirit, Grounded in Values</h3>
+        <p>
+            Prayer at Siddhartha Secondary School is a daily reminder that knowledge
+            without character is incomplete.
+        </p>
+        <a href="{% url 'about_introduction' %}" class="prayer-banner-btn">
+            <i class="bi bi-arrow-left"></i> Back to About Us
+        </a>
+    </div>
+
+</div>
+</div>
+
+<script>
+    document.querySelectorAll('.ptab').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var type = this.getAttribute('data-prayer');
+
+            // hide all panels
+            document.querySelectorAll('.prayer-panel').forEach(function(p) {
+                p.classList.remove('active');
+            });
+
+            // deactivate all tabs
+            document.querySelectorAll('.ptab').forEach(function(t) {
+                t.classList.remove('active');
+            });
+
+            // show selected panel
+            document.getElementById('panel-' + type).classList.add('active');
+
+            // activate selected tab
+            this.classList.add('active');
+
+            // scroll on mobile
+            if (window.innerWidth <= 700) {
+                document.getElementById('panel-' + type)
+                    .scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

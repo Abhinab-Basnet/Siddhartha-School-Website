@@ -1,0 +1,524 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* =============================================
+   SCHOOL LOGO PAGE
+============================================= */
+
+.logo-page { background: #f0f4ff; min-height: 100vh; padding: 64px 0 100px; }
+.logo-wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* BREADCRUMB */
+.logo-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: #8a96b8;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 52px;
+}
+.logo-breadcrumb a { color: #4a6fd4; text-decoration: none; transition: color 0.2s; }
+.logo-breadcrumb a:hover { color: #0f1f5c; }
+.logo-breadcrumb i { font-size: 0.55rem; color: #b8c4e0; }
+
+/* PAGE HEADING */
+.logo-heading { text-align: center; margin-bottom: 64px; }
+.logo-page-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 14px;
+}
+.logo-page-label::before, .logo-page-label::after {
+    content: ''; display: block; width: 24px; height: 1.5px;
+}
+.logo-page-label::before { background: linear-gradient(to right, transparent, #4a6fd4); }
+.logo-page-label::after  { background: linear-gradient(to left,  transparent, #4a6fd4); }
+.logo-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900; color: #0f1f5c;
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.5px;
+}
+.logo-heading h1 .a-blue   { color: #4a6fd4; }
+.logo-heading h1 .a-orange { color: #e05a2b; }
+.logo-heading p {
+    font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+    color: #6a7a9e; line-height: 1.75; margin: 0 auto; max-width: 520px;
+}
+
+/* ══════════════════════════════════
+   LOGO SHOWCASE CARD
+══════════════════════════════════ */
+.logo-showcase {
+    background: #fff;
+    border-radius: 24px;
+    border: 1px solid #dde8ff;
+    box-shadow: 0 4px 40px rgba(74,111,212,0.1);
+    overflow: hidden;
+    margin-bottom: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Left: image display area */
+.logo-image-panel {
+    background: linear-gradient(145deg, #0d1c52 0%, #1a3a8f 50%, #2c54c9 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 64px 48px; gap: 24px;
+    position: relative; overflow: hidden;
+    min-height: 480px;
+}
+.logo-image-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 70% 60% at 20% 20%, rgba(74,111,212,0.2), transparent),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(201,168,76,0.1), transparent);
+}
+/* decorative rings */
+.deco-ring {
+    position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05);
+    top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none;
+}
+.deco-ring-1 { width: 560px; height: 560px; }
+.deco-ring-2 { width: 420px; height: 420px; border-color: rgba(255,255,255,0.04); }
+
+.logo-img-wrap {
+    position: relative; z-index: 2;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s;
+}
+.logo-img-wrap:hover { transform: scale(1.03); }
+
+.logo-img-wrap img {
+    width: 220px; height: 220px;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 8px 32px rgba(0,0,0,0.4));
+}
+
+.logo-caption {
+    text-align: center; position: relative; z-index: 2;
+}
+.logo-caption h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 900; color: #fff; margin: 0 0 6px;
+}
+.logo-caption h3 span { color: #f7d878; }
+.logo-caption-divider {
+    width: 40px; height: 2px;
+    background: linear-gradient(to right, #e05a2b, #c9a84c);
+    border-radius: 2px; margin: 8px auto;
+}
+.logo-caption p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; color: rgba(255,255,255,0.5);
+    letter-spacing: 2.5px; text-transform: uppercase; font-weight: 600; margin: 0;
+}
+
+/* Right: quick facts */
+.logo-facts-panel { padding: 44px 44px; display: flex; flex-direction: column; gap: 20px; }
+.logo-facts-panel h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 800; color: #0f1f5c; margin: 0;
+}
+.logo-facts-panel > p {
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+    color: #6a7a8e; line-height: 1.8; margin: 0;
+}
+.fact-list { display: flex; flex-direction: column; gap: 11px; }
+.fact-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 16px; border-radius: 12px;
+    background: #f0f4ff; border: 1px solid #dde8ff;
+}
+.fact-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.fact-item p {
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+    color: #4a5568; margin: 0; line-height: 1.4;
+}
+.fact-item p strong { color: #0f1f5c; font-weight: 700; }
+
+/* ══════════════════════════════════
+   COMPONENTS SECTION
+══════════════════════════════════ */
+.components-section { margin-bottom: 28px; }
+.section-eyebrow { text-align: center; margin-bottom: 36px; }
+.section-eyebrow span {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+}
+.section-eyebrow h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 800;
+    color: #0f1f5c; margin: 8px 0 0;
+}
+
+.components-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.comp-card {
+    background: #fff; border-radius: 20px; padding: 32px 26px;
+    border: 1px solid #dde8ff;
+    box-shadow: 0 2px 20px rgba(74,111,212,0.07);
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative; overflow: hidden;
+}
+.comp-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(74,111,212,0.13); }
+.comp-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; border-radius: 20px 20px 0 0;
+}
+.comp-card.c-blue::before   { background: linear-gradient(to right, #1a3a8f, #4a6fd4); }
+.comp-card.c-red::before    { background: linear-gradient(to right, #dc2626, #f87171); }
+.comp-card.c-green::before  { background: linear-gradient(to right, #16a34a, #4ade80); }
+.comp-card.c-cyan::before   { background: linear-gradient(to right, #0891b2, #22d3ee); }
+.comp-card.c-gold::before   { background: linear-gradient(to right, #c9a84c, #f7d878); }
+.comp-card.c-lime::before   { background: linear-gradient(to right, #65a30d, #bef264); }
+
+.comp-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 18px;
+}
+.ci-blue   { background: rgba(74,111,212,0.12);  color: #4a6fd4; }
+.ci-red    { background: rgba(220,38,38,0.1);    color: #dc2626; }
+.ci-green  { background: rgba(22,163,74,0.1);    color: #16a34a; }
+.ci-cyan   { background: rgba(8,145,178,0.1);    color: #0891b2; }
+.ci-gold   { background: rgba(201,168,76,0.12);  color: #c9a84c; }
+.ci-lime   { background: rgba(101,163,13,0.1);   color: #65a30d; }
+
+.comp-card h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 800;
+    color: #0f1f5c; margin: 0 0 10px;
+}
+.comp-card p {
+    font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+    color: #6a7a8e; line-height: 1.75; margin: 0 0 16px;
+}
+.comp-color-tag {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+    padding: 4px 12px; border-radius: 50px; margin-top: 4px;
+}
+.comp-color-tag .color-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ══════════════════════════════════
+   COLOUR PALETTE
+══════════════════════════════════ */
+.palette-section { margin-bottom: 56px; }
+.palette-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.pal-card {
+    border-radius: 16px; overflow: hidden; background: #fff;
+    border: 1px solid #dde8ff; box-shadow: 0 2px 14px rgba(74,111,212,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.pal-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(74,111,212,0.14); }
+.pal-swatch { height: 88px; }
+.pal-body { padding: 12px 14px 14px; }
+.pal-body h4 { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700; color: #0f1f5c; margin: 0 0 3px; }
+.pal-body code { font-family: monospace; font-size: 0.66rem; color: #8a9ab8; background: #f0f4ff; padding: 2px 5px; border-radius: 4px; }
+
+/* BANNER */
+.logo-banner {
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    border-radius: 22px; padding: 52px 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap; position: relative; overflow: hidden;
+}
+.logo-banner::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+}
+.lb-text { position: relative; z-index: 1; }
+.lb-text h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin: 0 0 10px; }
+.lb-text p  { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.65; max-width: 420px; }
+.lb-actions { display: flex; gap: 14px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 1; }
+.lb-btn-white {
+    display: inline-flex; align-items: center; gap: 8px; background: #fff; color: #0f1f5c;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.lb-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #0f1f5c; }
+.lb-btn-outline {
+    display: inline-flex; align-items: center; gap: 8px; background: transparent;
+    color: rgba(255,255,255,0.85); border: 1.5px solid rgba(255,255,255,0.3);
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.lb-btn-outline:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+    .logo-showcase  { grid-template-columns: 1fr; }
+    .components-grid { grid-template-columns: repeat(2, 1fr); }
+    .palette-grid   { grid-template-columns: repeat(3, 1fr); }
+    .logo-banner    { padding: 36px 28px; }
+}
+@media (max-width: 580px) {
+    .logo-facts-panel { padding: 28px 24px; }
+    .logo-image-panel { padding: 44px 24px; }
+    .components-grid  { grid-template-columns: 1fr; }
+    .palette-grid     { grid-template-columns: repeat(2, 1fr); }
+    .logo-page        { padding: 44px 0 60px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logo-page">
+<div class="logo-wrap">
+
+    {# BREADCRUMB #}
+    <div class="logo-breadcrumb">
+        <a href="/">Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="#">About Us</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>School Logo</span>
+    </div>
+
+    {# PAGE HEADING #}
+    <div class="logo-heading">
+        <div class="logo-page-label">Our Visual Identity</div>
+        <h1>The <span class="a-blue">Official</span> School <span class="a-orange">Logo</span></h1>
+        <p>
+            The emblem of Siddhartha Secondary School — a symbol carrying our heritage,
+            values, and aspirations since Estd. 2051 B.S.
+        </p>
+    </div>
+
+    {# LOGO SHOWCASE #}
+    <div class="logo-showcase">
+
+        {# Left: Logo image display #}
+        <div class="logo-image-panel">
+            <div class="deco-ring deco-ring-1"></div>
+            <div class="deco-ring deco-ring-2"></div>
+
+            <div class="logo-img-wrap">
+                {# ── REPLACE src with your actual logo path ── #}
+                <img src="{% static 'images/school_logo.png' %}" alt="Siddhartha Secondary School Logo" />
+            </div>
+
+            <div class="logo-caption">
+                <h3>Siddhartha <span>Secondary School</span></h3>
+                <div class="logo-caption-divider"></div>
+                <p>Sundarharaincha-10, Morang</p>
+            </div>
+        </div>
+
+        {# Right: Quick facts #}
+        <div class="logo-facts-panel">
+            <h2>About Our Emblem</h2>
+            <p>
+                The school logo is the official visual identity of Siddhartha Secondary School.
+                Every element — from the shield to the doves — has been deliberately chosen
+                to represent the school's founding mission and its role in the community.
+            </p>
+            <div class="fact-list">
+                <div class="fact-item">
+                    <div class="fact-dot" style="background:#1a3a8f;"></div>
+                    <p><strong>School Name:</strong> Siddhartha Secondary School</p>
+                </div>
+                <div class="fact-item">
+                    <div class="fact-dot" style="background:#dc2626;"></div>
+                    <p><strong>Established:</strong> 2051 B.S. (1994 A.D.)</p>
+                </div>
+                <div class="fact-item">
+                    <div class="fact-dot" style="background:#16a34a;"></div>
+                    <p><strong>Location:</strong> Sundarharaincha-10, Morang, Koshi Province</p>
+                </div>
+                <div class="fact-item">
+                    <div class="fact-dot" style="background:#0891b2;"></div>
+                    <p><strong>Abbreviation:</strong> S.S.S. — inscribed four times in the Star of David</p>
+                </div>
+                <div class="fact-item">
+                    <div class="fact-dot" style="background:#c9a84c;"></div>
+                    <p><strong>Shape:</strong> Heraldic shield within a circular emblem</p>
+                </div>
+                <div class="fact-item">
+                    <div class="fact-dot" style="background:#65a30d;"></div>
+                    <p><strong>Motto Banner:</strong> Yellow-green ribbon bearing the school's address</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# COMPONENTS SECTION #}
+    <div class="components-section">
+        <div class="section-eyebrow">
+            <span>Symbol Breakdown</span>
+            <h2>Elements of the Logo Explained</h2>
+        </div>
+
+        <div class="components-grid">
+
+            {# 1. Outer Circle & Name #}
+            <div class="comp-card c-red">
+                <div class="comp-icon-wrap ci-red"><i class="bi bi-circle"></i></div>
+                <h3>Outer Circle &amp; School Name</h3>
+                <p>
+                    A bold red circular ring frames the entire emblem. The school's full name —
+                    <em>SIDDHARTHA SECONDARY SCHOOL</em> — is written in large blue capital letters
+                    along the top arc, making the institution immediately recognisable.
+                </p>
+                <span class="comp-color-tag" style="background:#fff1f1; color:#dc2626;">
+                    <span class="color-dot" style="background:#dc2626;"></span> Red Ring
+                </span>
+                <span class="comp-color-tag" style="background:#eff2ff; color:#1a3a8f; margin-left:4px;">
+                    <span class="color-dot" style="background:#1a3a8f;"></span> Blue Text
+                </span>
+            </div>
+
+            {# 2. Heraldic Shield #}
+            <div class="comp-card c-green">
+                <div class="comp-icon-wrap ci-green"><i class="bi bi-shield-fill"></i></div>
+                <h3>Heraldic Shield</h3>
+                <p>
+                    At the heart of the logo sits a classic heraldic shield with a cream-yellow
+                    background, outlined in bold green. The shield is a universal symbol of
+                    protection, strength, and institutional pride — representing the school as a
+                    safe and nurturing environment for all students.
+                </p>
+                <span class="comp-color-tag" style="background:#f0fdf4; color:#16a34a;">
+                    <span class="color-dot" style="background:#16a34a;"></span> Green Border
+                </span>
+                <span class="comp-color-tag" style="background:#fefce8; color:#a16207; margin-left:4px;">
+                    <span class="color-dot" style="background:#f5f0c0;"></span> Cream Fill
+                </span>
+            </div>
+
+            {# 3. Star of David (Six-Pointed Star) #}
+            <div class="comp-card c-red">
+                <div class="comp-icon-wrap ci-red"><i class="bi bi-star-fill"></i></div>
+                <h3>Six-Pointed Star</h3>
+                <p>
+                    A prominent red six-pointed star (Star of David) dominates the shield. In the
+                    four outer triangular points of the star, the letters <strong>S S S S</strong>
+                    stand for <em>Siddhartha Secondary School</em>. The star symbolises
+                    enlightenment, direction, and the guiding light of knowledge shining in
+                    all directions.
+                </p>
+                <span class="comp-color-tag" style="background:#fff1f1; color:#dc2626;">
+                    <span class="color-dot" style="background:#dc2626;"></span> Red Star
+                </span>
+            </div>
+
+            {# 4. Open Book #}
+            <div class="comp-card c-cyan">
+                <div class="comp-icon-wrap ci-cyan"><i class="bi bi-book-fill"></i></div>
+                <h3>Open Book</h3>
+                <p>
+                    Placed at the centre of the star, a cyan open book is the most direct symbol
+                    of the school's core purpose — <strong>education and learning</strong>. It
+                    represents the pursuit of knowledge, academic excellence, and the open minds
+                    the school aims to cultivate in every student.
+                </p>
+                <span class="comp-color-tag" style="background:#ecfeff; color:#0891b2;">
+                    <span class="color-dot" style="background:#0891b2;"></span> Cyan / Light Blue
+                </span>
+            </div>
+
+            {# 5. Two Doves #}
+            <div class="comp-card c-cyan">
+                <div class="comp-icon-wrap ci-cyan"><i class="bi bi-feather"></i></div>
+                <h3>Two Doves</h3>
+                <p>
+                    On either side of the shield, two white doves are depicted in flight,
+                    outlined in cyan. Doves are a universal symbol of <strong>peace, freedom,
+                    and hope</strong>. Their presence flanking the shield signifies the school's
+                    commitment to nurturing a peaceful, harmonious learning community.
+                </p>
+                <span class="comp-color-tag" style="background:#ecfeff; color:#0891b2;">
+                    <span class="color-dot" style="background:#0891b2;"></span> Cyan Outline
+                </span>
+            </div>
+
+            {# 6. Ribbon Banner #}
+            <div class="comp-card c-lime">
+                <div class="comp-icon-wrap ci-lime"><i class="bi bi-bookmark-ribbon-fill"></i></div>
+                <h3>Ribbon Banner</h3>
+                <p>
+                    A bold yellow-green ribbon unfurls beneath the entire emblem, bearing the
+                    school's address: <em>Sundarharaincha-10, Morang</em> in elegant script.
+                    The ribbon grounds the logo geographically, connecting the school to its
+                    local community and roots in Koshi Province.
+                </p>
+                <span class="comp-color-tag" style="background:#f7fee7; color:#65a30d;">
+                    <span class="color-dot" style="background:#84cc16;"></span> Yellow-Green / Lime
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    {# COLOUR PALETTE #}
+    <div class="palette-section">
+        <div class="section-eyebrow">
+            <span>Logo Colours</span>
+            <h2>Colours Used in the Emblem</h2>
+        </div>
+        <div class="palette-grid">
+            <div class="pal-card">
+                <div class="pal-swatch" style="background:#1a3a8f;"></div>
+                <div class="pal-body"><h4>Royal Blue</h4><code>#1a3a8f</code></div>
+            </div>
+            <div class="pal-card">
+                <div class="pal-swatch" style="background:#dc2626;"></div>
+                <div class="pal-body"><h4>Vivid Red</h4><code>#dc2626</code></div>
+            </div>
+            <div class="pal-card">
+                <div class="pal-swatch" style="background:#16a34a;"></div>
+                <div class="pal-body"><h4>Emerald Green</h4><code>#16a34a</code></div>
+            </div>
+            <div class="pal-card">
+                <div class="pal-swatch" style="background:#22d3ee;"></div>
+                <div class="pal-body"><h4>Sky Cyan</h4><code>#22d3ee</code></div>
+            </div>
+            <div class="pal-card">
+                <div class="pal-swatch" style="background:#bef264;"></div>
+                <div class="pal-body"><h4>Lime Yellow</h4><code>#bef264</code></div>
+            </div>
+            <div class="pal-card">
+                <div class="pal-swatch" style="background:#f5f0c0; border-bottom: 1px solid #dde8ff;"></div>
+                <div class="pal-body"><h4>Cream</h4><code>#f5f0c0</code></div>
+            </div>
+        </div>
+    </div>
+
+    {# BANNER #}
+    <div class="logo-banner">
+        <div class="lb-text">
+            <h3>Proud to Carry Our Emblem</h3>
+            <p>
+                The logo of Siddhartha Secondary School is a proud symbol worn by every
+                student, displayed on every document, and recognised across Koshi Province.
+            </p>
+        </div>
+        <div class="lb-actions">
+            <a href="{% url 'contact' %}" class="lb-btn-white">
+                <i class="bi bi-chat-dots"></i> Contact Us
+            </a>
+            <a href="{% url 'about_introduction' %}" class="lb-btn-outline">
+                <i class="bi bi-arrow-left"></i> About Us
+            </a>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

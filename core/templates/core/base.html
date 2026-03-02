@@ -621,21 +621,21 @@
                             <div class="col-title">About</div>
                             <a href="{% url 'about_introduction' %}">Introduction</a>
                             <a href="#">Leadership Team</a>
-                            <a href="#">Vision & Mission</a>
+                            <a href="{% url 'mission' %}">Vision & Mission</a>
                             <a href="#">Student Handbook</a>
                         </div>
                         <div class="mega-col">
                             <div class="col-title">School Identity</div>
-                            <a href="#">School Anthem</a>
-                            <a href="#">School Motto</a>
-                            <a href="#">Crest & Colours</a>
-                            <a href="#">History & Legacy</a>
+                            <a href="{% url 'prayer' %}">School Anthem</a>
+                            <a href="{% url 'motto' %}">School Motto</a>
+                            <a href="{% url 'logo' %}">School Logo</a>
+                            <a href="{% url 'history' %}">History & Legacy</a>
                         </div>
                         <div class="mega-col">
                             <div class="col-title">Foundation</div>
                             <a href="#">Our Values</a>
                             <a href="#">Community Outreach</a>
-                            <a href="#">Achievements</a>
+                            <a href="{% url 'achievement_list' %}">Achievements</a>
                         </div>
                     </div>
                 </li>

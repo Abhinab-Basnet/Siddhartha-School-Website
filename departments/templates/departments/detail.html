@@ -1,47 +1,460 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+/* =============================================
+   DEPARTMENT DETAIL PAGE
+   Full cover hero · two-column layout
+============================================= */
+
+.dd-page { background: #f2f5f9; min-height: 100vh; }
+
+/* ── HERO COVER ── */
+.dd-hero {
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+    background: #0a1628;
+}
+
+.dd-hero-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.35;
+    transition: transform 8s ease;
+}
+
+.dd-hero:hover .dd-hero-img { transform: scale(1.04); }
+
+/* gradient */
+.dd-hero::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+        to bottom,
+        rgba(10,22,40,0.3)  0%,
+        rgba(10,22,40,0.85) 75%,
+        rgba(10,22,40,1)    100%
+    );
+}
+
+/* dot texture */
+.dd-hero::after {
+    content: '';
+    position: absolute; inset: 0; z-index: 1;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+.dd-hero-inner {
+    position: absolute; z-index: 2;
+    bottom: 0; left: 0; right: 0;
+    max-width: 1260px; margin: 0 auto; padding: 0 28px 40px;
+}
+
+/* breadcrumb */
+.dd-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,0.38);
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 18px;
+}
+.dd-breadcrumb a { color: rgba(255,255,255,0.38); text-decoration: none; transition: color 0.2s; }
+.dd-breadcrumb a:hover { color: rgba(255,255,255,0.7); }
+.dd-breadcrumb i { font-size: 0.55rem; }
+
+.dd-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 2px; color: rgba(255,255,255,0.45);
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 12px;
+}
+.dd-tag::before { content: ''; display: block; width: 14px; height: 1px; background: rgba(255,255,255,0.3); }
+
+.dd-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900; color: #fff;
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.5px;
+}
+
+.dd-hero-meta {
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+}
+.dd-meta-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50px; padding: 7px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; color: rgba(255,255,255,0.8);
+    backdrop-filter: blur(6px);
+}
+.dd-meta-pill i { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+/* ── MAIN LAYOUT ── */
+.dd-main {
+    max-width: 1260px; margin: 0 auto;
+    padding: 48px 28px 80px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 32px;
+    align-items: start;
+}
+
+/* ── LEFT — CONTENT ── */
+.dd-content {}
+
+/* about card */
+.dd-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #e4eaf2;
+    box-shadow: 0 2px 16px rgba(10,22,40,0.06);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.dd-card-header {
+    padding: 20px 26px;
+    border-bottom: 1px solid #eef2f8;
+    display: flex; align-items: center; gap: 12px;
+}
+
+.dd-card-header-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: #0a1628;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 0.9rem; flex-shrink: 0;
+}
+
+.dd-card-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 700;
+    color: #0a1628; margin: 0;
+}
+
+.dd-card-body { padding: 24px 26px; }
+
+.dd-card-body p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; color: #4a5568;
+    line-height: 1.85; margin: 0;
+}
+
+/* contact card */
+.dd-contact-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f4f8;
+}
+.dd-contact-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.dd-contact-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: #f0f4f9;
+    display: flex; align-items: center; justify-content: center;
+    color: #5a7a9a; font-size: 0.85rem; flex-shrink: 0;
+}
+
+.dd-contact-label {
+    font-size: 0.6rem; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #a0aab4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    display: block; margin-bottom: 2px;
+}
+
+.dd-contact-value {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; color: #0a1628; font-weight: 500;
+}
+.dd-contact-value a { color: #0a1628; text-decoration: none; }
+.dd-contact-value a:hover { color: #3b6ea5; }
+
+/* ── RIGHT — SIDEBAR ── */
+.dd-sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+/* faculty card */
+.dd-sidebar-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #e4eaf2;
+    box-shadow: 0 2px 16px rgba(10,22,40,0.06);
+    overflow: hidden;
+}
+
+.dd-sidebar-header {
+    background: #0a1628;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 10px;
+}
+
+.dd-sidebar-header h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: #fff; margin: 0;
+}
+
+.dd-sidebar-header i { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+
+/* faculty item */
+.dd-teacher {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f0f4f8;
+    transition: background 0.15s;
+}
+.dd-teacher:last-child { border-bottom: none; }
+.dd-teacher:hover { background: #f7f9fc; }
+
+.dd-teacher-photo {
+    width: 48px; height: 48px; border-radius: 12px;
+    object-fit: cover; flex-shrink: 0;
+    background: #dde4ee;
+}
+
+.dd-teacher-fallback {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, #0e2040, #1a3a6e);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700;
+    color: rgba(255,255,255,0.5); flex-shrink: 0;
+}
+
+.dd-teacher-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem; font-weight: 600; color: #0a1628; margin: 0 0 3px;
+}
+.dd-teacher-role {
+    font-size: 0.73rem; color: #8a96a3;
+    font-family: 'DM Sans', sans-serif; margin: 0;
+}
+
+.dd-teacher-count {
+    padding: 12px 18px;
+    background: #f7f9fc;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; color: #8a96a3;
+    border-top: 1px solid #eef2f8;
+}
+.dd-teacher-count strong { color: #0a1628; }
+
+/* no faculty */
+.dd-no-faculty {
+    padding: 32px 18px; text-align: center;
+    color: #a0aab4; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+}
+.dd-no-faculty i { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+/* quick info card */
+.dd-info-card {
+    background: #0a1628;
+    border-radius: 18px;
+    padding: 24px;
+    position: relative; overflow: hidden;
+}
+.dd-info-card::before {
+    content: '';
+    position: absolute; top: -50px; right: -50px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 70%);
+}
+.dd-info-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem; color: #fff; margin: 0 0 16px;
+}
+.dd-info-row {
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+}
+.dd-info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.dd-info-key { color: rgba(255,255,255,0.4); }
+.dd-info-val { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+/* back link */
+.dd-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    font-weight: 600; color: #5a7a9a; text-decoration: none;
+    margin-bottom: 28px; transition: color 0.2s, gap 0.2s;
+}
+.dd-back:hover { color: #0a1628; gap: 12px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+    .dd-main { grid-template-columns: 1fr; }
+    .dd-hero  { height: 320px; }
+}
+@media (max-width: 560px) {
+    .dd-hero  { height: 260px; }
+    .dd-main  { padding: 32px 16px 60px; }
+    .dd-hero-inner { padding: 0 16px 28px; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-5 mb-5" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ dept.cover_image.url }}') center/cover;">
-    <div class="container text-center">
-        <h1 class="display-3 fw-bold">{{ dept.name }}</h1>
-        <p class="lead">Head of Department: <strong>{{ dept.hod_name }}</strong></p>
+<div class="dd-page">
+
+{# ── HERO COVER ── #}
+<div class="dd-hero">
+    {% if dept.cover_image %}
+        <img class="dd-hero-img" src="{{ dept.cover_image.url }}" alt="{{ dept.name }}">
+    {% endif %}
+
+    <div class="dd-hero-inner">
+        <div class="dd-breadcrumb">
+            <a href="/">Home</a>
+            <i class="bi bi-chevron-right"></i>
+            <a href="{% url 'dept_list' %}">Departments</a>
+            <i class="bi bi-chevron-right"></i>
+            <span>{{ dept.name }}</span>
+        </div>
+
+        <div class="dd-tag">Academic Department</div>
+
+        <h1>{{ dept.name }}</h1>
+
+        <div class="dd-hero-meta">
+            <div class="dd-meta-pill">
+                <i class="bi bi-person-badge"></i>
+                HOD: {{ dept.hod_name }}
+            </div>
+            <div class="dd-meta-pill">
+                <i class="bi bi-people"></i>
+                {{ teachers|length }} Faculty Member{{ teachers|length|pluralize }}
+            </div>
+            {% if dept.contact_email %}
+            <div class="dd-meta-pill">
+                <i class="bi bi-envelope"></i>
+                {{ dept.contact_email }}
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <h2 class="mb-4">About the Department</h2>
-            <p class="fs-5 text-muted" style="line-height: 1.8;">
-                {{ dept.description }}
-            </p>
-            
-            <div class="mt-5">
-                <h4>Contact Details</h4>
-                <p>📧 Email: {{ dept.contact_email }}</p>
+{# ── MAIN CONTENT ── #}
+<div class="dd-main">
+
+    {# LEFT COLUMN #}
+    <div class="dd-content">
+
+        <a href="{% url 'dept_list' %}" class="dd-back">
+            <i class="bi bi-arrow-left"></i> All Departments
+        </a>
+
+        {# About card #}
+        <div class="dd-card">
+            <div class="dd-card-header">
+                <div class="dd-card-header-icon"><i class="bi bi-book-fill"></i></div>
+                <h2>About the Department</h2>
+            </div>
+            <div class="dd-card-body">
+                <p>{{ dept.description }}</p>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Department Faculty</h5>
+        {# Contact card #}
+        {% if dept.contact_email %}
+        <div class="dd-card">
+            <div class="dd-card-header">
+                <div class="dd-card-header-icon"><i class="bi bi-chat-dots-fill"></i></div>
+                <h2>Contact Details</h2>
+            </div>
+            <div class="dd-card-body">
+                <div class="dd-contact-row">
+                    <div class="dd-contact-icon"><i class="bi bi-envelope-fill"></i></div>
+                    <div>
+                        <span class="dd-contact-label">Email</span>
+                        <span class="dd-contact-value">
+                            <a href="mailto:{{ dept.contact_email }}">{{ dept.contact_email }}</a>
+                        </span>
+                    </div>
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for teacher in teachers %}
-                    <li class="list-group-item d-flex align-items-center">
-                        <img src="{{ teacher.image.url }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                        <div>
-                            <div class="fw-bold">{{ teacher.name }}</div>
-                            <small class="text-muted">{{ teacher.designation }}</small>
-                        </div>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item">No faculty listed yet.</li>
-                    {% endfor %}
-                </ul>
+                {% if dept.contact_phone %}
+                <div class="dd-contact-row">
+                    <div class="dd-contact-icon"><i class="bi bi-telephone-fill"></i></div>
+                    <div>
+                        <span class="dd-contact-label">Phone</span>
+                        <span class="dd-contact-value">
+                            <a href="tel:{{ dept.contact_phone }}">{{ dept.contact_phone }}</a>
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
+        {% endif %}
+
     </div>
+
+    {# RIGHT SIDEBAR #}
+    <div class="dd-sidebar">
+
+        {# Quick info #}
+        <div class="dd-info-card">
+            <h4>Department Info</h4>
+            <div class="dd-info-row">
+                <span class="dd-info-key">Head of Dept.</span>
+                <span class="dd-info-val">{{ dept.hod_name }}</span>
+            </div>
+            <div class="dd-info-row">
+                <span class="dd-info-key">Faculty Count</span>
+                <span class="dd-info-val">{{ teachers|length }}</span>
+            </div>
+            <div class="dd-info-row">
+                <span class="dd-info-key">Status</span>
+                <span class="dd-info-val" style="color:#4ade80;">Active</span>
+            </div>
+        </div>
+
+        {# Faculty list #}
+        <div class="dd-sidebar-card">
+            <div class="dd-sidebar-header">
+                <i class="bi bi-people-fill"></i>
+                <h3>Department Faculty</h3>
+            </div>
+
+            {% for teacher in teachers %}
+            <div class="dd-teacher">
+                {% if teacher.image %}
+                    <img class="dd-teacher-photo" src="{{ teacher.image.url }}" alt="{{ teacher.name }}">
+                {% else %}
+                    <div class="dd-teacher-fallback">
+                        {{ teacher.name|slice:":2"|upper }}
+                    </div>
+                {% endif %}
+                <div>
+                    <p class="dd-teacher-name">{{ teacher.name }}</p>
+                    <p class="dd-teacher-role">{{ teacher.designation }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="dd-no-faculty">
+                <i class="bi bi-person-x"></i>
+                No faculty listed yet.
+            </div>
+            {% endfor %}
+
+            {% if teachers %}
+            <div class="dd-teacher-count">
+                <strong>{{ teachers|length }}</strong> member{{ teachers|length|pluralize }} in this department
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
 </div>
 {% endblock %}

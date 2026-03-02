@@ -1,0 +1,351 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* =============================================
+   ACHIEVEMENT LIST PAGE
+============================================= */
+
+.ach-page { background: #f0f4ff; min-height: 100vh; padding: 64px 0 100px; }
+.ach-wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+/* BREADCRUMB */
+.ach-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 2px; color: #8a96b8;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    margin-bottom: 52px;
+}
+.ach-breadcrumb a { color: #4a6fd4; text-decoration: none; transition: color 0.2s; }
+.ach-breadcrumb a:hover { color: #0f1f5c; }
+.ach-breadcrumb i { font-size: 0.55rem; color: #b8c4e0; }
+
+/* PAGE HEADING */
+.ach-heading { text-align: center; margin-bottom: 64px; }
+.ach-page-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 3px; color: #4a6fd4;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    margin-bottom: 14px;
+}
+.ach-page-label::before, .ach-page-label::after {
+    content: ''; display: block; width: 24px; height: 1.5px;
+}
+.ach-page-label::before { background: linear-gradient(to right, transparent, #4a6fd4); }
+.ach-page-label::after  { background: linear-gradient(to left,  transparent, #4a6fd4); }
+.ach-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900; color: #0f1f5c;
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.5px;
+}
+.ach-heading h1 .a-blue   { color: #4a6fd4; }
+.ach-heading h1 .a-orange { color: #e05a2b; }
+.ach-heading p {
+    font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+    color: #6a7a9e; line-height: 1.75; margin: 0 auto; max-width: 520px;
+}
+
+/* ── STATS STRIP ── */
+.ach-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-bottom: 56px;
+}
+.ach-stat {
+    background: #fff; border-radius: 16px; padding: 24px 20px;
+    text-align: center; border: 1px solid #dde8ff;
+    box-shadow: 0 2px 16px rgba(74,111,212,0.07);
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.ach-stat:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(74,111,212,0.13); }
+.ach-stat::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; border-radius: 16px 16px 0 0;
+}
+.ach-stat:nth-child(1)::before { background: linear-gradient(to right, #1a3a8f, #4a6fd4); }
+.ach-stat:nth-child(2)::before { background: linear-gradient(to right, #e05a2b, #f7a456); }
+.ach-stat:nth-child(3)::before { background: linear-gradient(to right, #c9a84c, #f7d878); }
+.ach-stat-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; margin: 0 auto 12px;
+}
+.as-blue   { background: rgba(74,111,212,0.1);  color: #4a6fd4; }
+.as-orange { background: rgba(224,90,43,0.1);   color: #e05a2b; }
+.as-gold   { background: rgba(201,168,76,0.12); color: #c9a84c; }
+.ach-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900; color: #0f1f5c; line-height: 1;
+}
+.ach-stat-label {
+    font-family: 'DM Sans', sans-serif; font-size: 0.72rem;
+    color: #8a9ab8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+/* ── CATEGORY GRID ── */
+.ach-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 64px;
+}
+
+.ach-category-card {
+    border-radius: 20px; overflow: hidden;
+    background: #fff; border: 1px solid #dde8ff;
+    box-shadow: 0 4px 24px rgba(74,111,212,0.08);
+    text-decoration: none;
+    display: block;
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s;
+    position: relative;
+}
+.ach-category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 56px rgba(74,111,212,0.18);
+}
+
+/* Cover image */
+.ach-cover {
+    position: relative; overflow: hidden; height: 220px;
+}
+.ach-cover img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.ach-category-card:hover .ach-cover img {
+    transform: scale(1.06);
+}
+
+/* Gradient overlay on image */
+.ach-cover-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(15,31,92,0.72) 0%, rgba(15,31,92,0.1) 55%, transparent 100%);
+    transition: opacity 0.3s;
+}
+.ach-category-card:hover .ach-cover-overlay {
+    opacity: 0.85;
+}
+
+/* Item count badge on image */
+.ach-count-badge {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    color: #fff; letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 5px;
+}
+
+/* Trophy icon overlay at bottom of image */
+.ach-trophy-wrap {
+    position: absolute; bottom: -22px; left: 24px;
+    width: 48px; height: 48px; border-radius: 14px;
+    background: #fff;
+    border: 2px solid #dde8ff;
+    box-shadow: 0 4px 16px rgba(74,111,212,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    z-index: 2;
+}
+
+/* Card body */
+.ach-card-body {
+    padding: 32px 22px 22px;
+}
+.ach-card-body h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 800;
+    color: #0f1f5c; margin: 0 0 8px; line-height: 1.3;
+}
+.ach-card-body p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; color: #8a9ab8;
+    margin: 0 0 14px; display: flex; align-items: center; gap: 5px;
+}
+.ach-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f0f4ff;
+}
+.ach-view-link {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.76rem; font-weight: 700;
+    color: #4a6fd4; text-transform: uppercase; letter-spacing: 0.8px;
+    display: flex; align-items: center; gap: 5px;
+    transition: gap 0.2s;
+}
+.ach-category-card:hover .ach-view-link { gap: 8px; }
+.ach-items-count {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; font-weight: 600; color: #8a9ab8;
+}
+
+/* ── EMPTY STATE ── */
+.ach-empty {
+    text-align: center; padding: 80px 40px;
+    background: #fff; border-radius: 20px; border: 1px solid #dde8ff;
+    grid-column: 1 / -1;
+}
+.ach-empty i { font-size: 3rem; color: #c0cae8; display: block; margin-bottom: 18px; }
+.ach-empty h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #0f1f5c; margin: 0 0 8px; }
+.ach-empty p  { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #8a9ab8; }
+
+/* ── BANNER ── */
+.ach-banner {
+    background: linear-gradient(135deg, #0f1f5c 0%, #1a3a8f 50%, #2c54c9 100%);
+    border-radius: 22px; padding: 52px 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap; position: relative; overflow: hidden;
+}
+.ach-banner::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+}
+.ab-text { position: relative; z-index: 1; }
+.ab-text h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin: 0 0 10px; }
+.ab-text p  { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.65; max-width: 420px; }
+.ab-actions { display: flex; gap: 14px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 1; }
+.ab-btn-white {
+    display: inline-flex; align-items: center; gap: 8px; background: #fff; color: #0f1f5c;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.ab-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); color: #0f1f5c; }
+.ab-btn-outline {
+    display: inline-flex; align-items: center; gap: 8px; background: transparent;
+    color: rgba(255,255,255,0.85); border: 1.5px solid rgba(255,255,255,0.3);
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px;
+    border-radius: 50px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.ab-btn-outline:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+    .ach-grid  { grid-template-columns: repeat(2, 1fr); }
+    .ach-stats { grid-template-columns: repeat(3, 1fr); }
+    .ach-banner { padding: 36px 28px; }
+}
+@media (max-width: 600px) {
+    .ach-grid  { grid-template-columns: 1fr; }
+    .ach-stats { grid-template-columns: 1fr 1fr; }
+    .ach-page  { padding: 44px 0 60px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ach-page">
+<div class="ach-wrap">
+
+    {# BREADCRUMB #}
+    <div class="ach-breadcrumb">
+        <a href="/">Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>Achievements</span>
+    </div>
+
+    {# PAGE HEADING #}
+    <div class="ach-heading">
+        <div class="ach-page-label">Our Pride</div>
+        <h1>School <span class="a-orange">Achievements</span></h1>
+        <p>
+            Celebrating the dedication, talent, and hard work of our students and staff —
+            every award, honour, and milestone that makes Siddhartha Secondary School proud.
+        </p>
+    </div>
+
+    {# STATS #}
+    <div class="ach-stats">
+        <div class="ach-stat">
+            <div class="ach-stat-icon as-blue"><i class="bi bi-trophy-fill"></i></div>
+            <div class="ach-stat-num">{{ categories|length }}</div>
+            <div class="ach-stat-label">Categories</div>
+        </div>
+        <div class="ach-stat">
+            <div class="ach-stat-icon as-orange"><i class="bi bi-award-fill"></i></div>
+            <div class="ach-stat-num">{{ total_items }}</div>
+            <div class="ach-stat-label">Total Achievements</div>
+        </div>
+        <div class="ach-stat">
+            <div class="ach-stat-icon as-gold"><i class="bi bi-star-fill"></i></div>
+            <div class="ach-stat-num">100%</div>
+            <div class="ach-stat-label">Dedication</div>
+        </div>
+    </div>
+
+    {# CATEGORY GRID #}
+    <div class="ach-grid">
+        {% if categories %}
+            {% for cat in categories %}
+            <a href="{% url 'achievement_detail' cat.pk %}" class="ach-category-card">
+
+                <div class="ach-cover">
+                    {% if cat.cover_image %}
+                        <img src="{{ cat.cover_image.url }}" alt="{{ cat.title }}"/>
+                    {% else %}
+                        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a3a8f,#4a6fd4);display:flex;align-items:center;justify-content:center;">
+                            <i class="bi bi-trophy-fill" style="font-size:3rem;color:rgba(255,255,255,0.3);"></i>
+                        </div>
+                    {% endif %}
+                    <div class="ach-cover-overlay"></div>
+                    <div class="ach-count-badge">
+                        <i class="bi bi-award"></i> {{ cat.items.count }} achievements
+                    </div>
+                    <div class="ach-trophy-wrap">🏆</div>
+                </div>
+
+                <div class="ach-card-body">
+                    <h3>{{ cat.title }}</h3>
+                    <p><i class="bi bi-calendar3"></i> {{ cat.created_at|date:"F Y" }}</p>
+                    <div class="ach-card-footer">
+                        <span class="ach-view-link">
+                            View All <i class="bi bi-arrow-right"></i>
+                        </span>
+                        <span class="ach-items-count">{{ cat.items.count }} items</span>
+                    </div>
+                </div>
+
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="ach-empty">
+                <i class="bi bi-trophy"></i>
+                <h3>No Achievement Categories Yet</h3>
+                <p>Achievement categories will appear here once they are added through the admin panel.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    {# BANNER #}
+    <div class="ach-banner">
+        <div class="ab-text">
+            <h3>Strive for Excellence</h3>
+            <p>Every great achievement starts with the decision to try. We celebrate every student who dares to dream and works to make it real.</p>
+        </div>
+        <div class="ab-actions">
+            <a href="{% url 'contact' %}" class="ab-btn-white">
+                <i class="bi bi-chat-dots"></i> Contact Us
+            </a>
+            <a href="/" class="ab-btn-outline">
+                <i class="bi bi-house"></i> Home
+            </a>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}
