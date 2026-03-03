@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from .models import HistoryEntry
 from .models import AchievementCategory
+from .forms import EntranceApplicationForm
 # Create your views here.
 def introduction(request):
     return render(request, 'about/introduction.html') 
@@ -38,3 +39,15 @@ def achievement_detail(request, category_id):
 def history(request):
     history_entries = HistoryEntry.objects.all().order_by('year_or_era')
     return render(request, 'about/history.html', {'history_entries': history_entries})
+
+
+
+def admission_form(request):
+    if request.method == 'POST':
+        form = EntranceApplicationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'about/success.html', {'message': 'Application submitted successfully!'})
+    else:
+        form = EntranceApplicationForm()
+    return render(request, 'about/admission.html', {'form': form})

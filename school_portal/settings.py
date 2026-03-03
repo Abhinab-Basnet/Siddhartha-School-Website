@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'gallery',
     'events',
     'about',
+    
 ]
 
 MIDDLEWARE = [
@@ -126,3 +128,62 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Siddhartha Admin",
+    "site_header": "Siddhartha Secondary School",
+    "site_brand": "SIddhartha Admin",
+    "site_logo": None,  # e.g. "images/logo.png"
+    "welcome_sign": "Welcome to Siddhartha School Admin",
+    "copyright": "Siddhartha Secondary School",
+    "search_model": [],
+    "topmenu_links": [
+        {"name": "School Website", "url": "/", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "theme": "darkly",      # try: flatly, cosmo, darkly, lumen, minty, pulse
+    "dark_mode_theme": "darkly",
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "core.Teacher": "fas fa-chalkboard-teacher",
+        "core.Notice": "fas fa-bell",
+        "core.Album": "fas fa-images",
+        "about.HistoryEntry": "fas fa-landmark",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-dark",
+    "accent": "accent-primary",        # accent color for buttons/links
+    "navbar": "navbar-dark",
+    "no_navbar_border": True,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary", # sidebar color
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "superhero",                 # ← CHANGE THIS for dashboard color
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+}

@@ -34,3 +34,32 @@ class AchievementItem(models.Model):
 
     def __str__(self):
         return f"Achievement: {self.title}"
+
+
+class EntranceApplication(models.Model):
+    # Personal Info
+    student_name_en = models.CharField(max_length=200)
+    student_name_np = models.CharField(max_length=200, blank=True)
+    dob_ad = models.DateField()
+    dob_bs = models.CharField(max_length=20)
+    nationality = models.CharField(max_length=50)
+    religion = models.CharField(max_length=50)
+    
+    # Parent/Guardian Details
+    father_name = models.CharField(max_length=200)
+    father_occupation = models.CharField(max_length=100)
+    mother_name = models.CharField(max_length=200)
+    mother_occupation = models.CharField(max_length=100)
+    
+    # Contact Info
+    permanent_address = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15)
+    
+    # Academic/Misc
+    last_school_attended = models.CharField(max_length=200)
+    grade_applying_for = models.CharField(max_length=10)
+    
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.student_name_en

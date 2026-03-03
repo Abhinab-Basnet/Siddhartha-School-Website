@@ -10,4 +10,5 @@ urlpatterns = [
     path('logo/', views.logo, name='logo'),
     path('achievements/', views.achievement_categories, name='achievement_list'),
     path('achievements/<int:category_id>/', views.achievement_detail, name='achievement_detail'),
+    path('admission/', views.admission_form, name='admission_form'),
 ]

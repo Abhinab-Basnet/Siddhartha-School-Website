@@ -1,0 +1,650 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --blue:      #1a3a8f;
+    --blue-mid:  #2c54c9;
+    --blue-lt:   #4a6fd4;
+    --blue-pale: #eef2ff;
+    --cream:     #fafaf7;
+    --text:      #1a2340;
+    --muted:     #6a7a9e;
+    --border:    #dde4f0;
+    --error:     #dc2626;
+    --ok:        #16a34a;
+}
+*, *::before, *::after { box-sizing: border-box; }
+.adm-page { background: var(--cream); min-height: 100vh; padding: 56px 0 100px; font-family: 'DM Sans', sans-serif; }
+.adm-wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+/* BREADCRUMB */
+.adm-bc { display: flex; align-items: center; gap: 8px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px; color: #8a96b8; font-weight: 600; margin-bottom: 40px; }
+.adm-bc a { color: var(--blue-lt); text-decoration: none; }
+.adm-bc a:hover { color: var(--blue); }
+.adm-bc i { font-size: 0.52rem; color: #c0cce0; }
+
+/* HEADER */
+.adm-header { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 60%, var(--blue-lt) 100%); border-radius: 20px 20px 0 0; padding: 40px 48px 36px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.adm-header::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 24px 24px; }
+.adm-htag { display: block; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 14px; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.8); font-weight: 700; margin-bottom: 14px; position: relative; z-index: 1; width: fit-content; }
+.adm-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3.5vw, 2.1rem); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 6px; position: relative; z-index: 1; }
+.adm-header p { font-size: 0.82rem; color: rgba(255,255,255,0.65); position: relative; z-index: 1; margin: 0; }
+.adm-seal { position: relative; z-index: 1; flex-shrink: 0; width: 72px; height: 72px; background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.8); }
+
+/* ── PROGRESS BAR (fixed) ── */
+.adm-progress {
+    background: #fff;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+/* the full-width background line */
+.adm-progress::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 72px; right: 72px;
+    height: 2px;
+    background: var(--border);
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+.adm-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+/* coloured fill line that grows as steps complete */
+.adm-progress-fill {
+    position: absolute;
+    top: 50%; left: 72px;
+    height: 2px;
+    background: var(--blue-lt);
+    transform: translateY(-50%);
+    z-index: 0;
+    transition: width 0.4s ease;
+    width: 0;
+}
+
+.adm-step-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--muted); background: #fff;
+    transition: all 0.3s;
+    position: relative; z-index: 1;
+}
+.adm-step.s-active .adm-step-dot {
+    background: var(--blue); border-color: var(--blue);
+    color: #fff; box-shadow: 0 0 0 5px rgba(44,84,201,0.15);
+}
+.adm-step.s-done .adm-step-dot {
+    background: var(--blue-lt); border-color: var(--blue-lt); color: #fff;
+}
+.adm-step-label {
+    font-size: 0.68rem; font-weight: 600;
+    color: var(--muted); white-space: nowrap;
+    transition: color 0.3s;
+}
+.adm-step.s-active .adm-step-label { color: var(--blue); }
+.adm-step.s-done   .adm-step-label { color: var(--blue-lt); }
+
+/* BODY */
+.adm-body { background: #fff; border: 1px solid var(--border); border-top: none; box-shadow: 0 8px 40px rgba(26,58,143,0.10); }
+.adm-panel { display: none; padding: 40px 48px 32px; }
+.adm-panel.adm-active { display: block; }
+
+/* SECTION TITLE */
+.adm-stitle { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.adm-sicon { width: 40px; height: 40px; border-radius: 10px; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; color: var(--blue-mid); font-size: 1rem; flex-shrink: 0; }
+.adm-stitle h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--text); margin: 0; }
+.adm-stitle span { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 2px; }
+
+/* GRID + FIELDS */
+.adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; margin-bottom: 8px; }
+.adm-grid.g1 { grid-template-columns: 1fr; }
+.adm-field { display: flex; flex-direction: column; gap: 5px; }
+.adm-field.s2 { grid-column: span 2; }
+.adm-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text); }
+.adm-label .req { color: var(--error); margin-left: 2px; }
+.adm-hint { font-size: 0.7rem; color: var(--muted); }
+
+/* INPUTS */
+.adm-page input[type="text"],
+.adm-page input[type="date"],
+.adm-page input[type="tel"],
+.adm-page input[type="number"],
+.adm-page select,
+.adm-page textarea {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: var(--text);
+    background: #fff; outline: none; -webkit-appearance: none; appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.adm-page input:focus, .adm-page select:focus, .adm-page textarea:focus {
+    border-color: var(--blue-mid); box-shadow: 0 0 0 3px rgba(44,84,201,0.1);
+}
+.adm-page input.inp-error, .adm-page select.inp-error, .adm-page textarea.inp-error {
+    border-color: var(--error); box-shadow: 0 0 0 3px rgba(220,38,38,0.08);
+}
+.adm-page select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a7a9e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+.adm-page textarea { resize: vertical; min-height: 88px; }
+.errorlist { list-style: none; padding: 0; margin: 3px 0 0; }
+.errorlist li { font-size: 0.7rem; color: var(--error); }
+.field-err-msg { font-size: 0.7rem; color: var(--error); margin-top: 2px; display: none; }
+.field-err-msg.show { display: block; }
+
+/* validation error banner */
+.val-banner {
+    display: none;
+    background: #fff5f5; border: 1px solid #fca5a5;
+    border-radius: 10px; padding: 12px 16px;
+    margin-bottom: 20px; font-size: 0.82rem; color: var(--error);
+}
+.val-banner.show { display: flex; align-items: center; gap: 8px; }
+
+/* REVIEW */
+.adm-review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.adm-review-item { background: var(--blue-pale); border-radius: 10px; padding: 12px 16px; }
+.adm-rlbl { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-weight: 700; display: block; margin-bottom: 3px; }
+.adm-rval { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+
+/* NAV */
+.adm-nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 48px 36px; border-top: 1px solid var(--border); background: #fafbff; border-radius: 0 0 20px 20px; }
+.adm-counter { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+.btn-back { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1.5px solid var(--border); color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; padding: 11px 22px; border-radius: 50px; cursor: pointer; transition: all 0.2s; }
+.btn-back:hover { border-color: var(--blue-lt); color: var(--blue); }
+.btn-next { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--blue), var(--blue-mid)); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700; padding: 12px 28px; border-radius: 50px; border: none; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 16px rgba(26,58,143,0.25); text-transform: uppercase; letter-spacing: 0.8px; }
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,58,143,0.35); }
+.btn-next.shake { animation: shake 0.35s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 60%{transform:translateX(7px)} 80%{transform:translateX(-4px)} }
+.btn-submit { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700; padding: 12px 32px; border-radius: 50px; border: none; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 16px rgba(22,163,74,0.3); text-transform: uppercase; letter-spacing: 0.8px; }
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,163,74,0.4); }
+
+/* SUCCESS */
+.adm-success { display: none; padding: 72px 48px; text-align: center; }
+.adm-success-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #22c55e); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; margin: 0 auto 24px; box-shadow: 0 8px 32px rgba(22,163,74,0.3); animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+@keyframes popIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+.adm-success h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.adm-success p { font-size: 0.88rem; color: var(--muted); max-width: 400px; margin: 0 auto 24px; line-height: 1.7; }
+.adm-success-ref { display: inline-block; background: var(--blue-pale); color: var(--blue); font-size: 0.78rem; font-weight: 700; padding: 10px 24px; border-radius: 10px; letter-spacing: 1px; margin-bottom: 28px; }
+.adm-success-back { display: inline-flex; align-items: center; gap: 8px; background: var(--blue); color: #fff; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 24px; border-radius: 50px; text-decoration: none; transition: background 0.2s; }
+.adm-success-back:hover { background: var(--blue-mid); color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+    .adm-header { padding: 28px 20px; }
+    .adm-seal { display: none; }
+    .adm-progress { padding: 14px 20px; }
+    .adm-progress::before { left: 48px; right: 48px; }
+    .adm-step-label { display: none; }
+    .adm-step-dot { width: 30px; height: 30px; font-size: 0.7rem; }
+    .adm-panel { padding: 24px 20px; }
+    .adm-nav { padding: 18px 20px 28px; flex-wrap: wrap; gap: 10px; }
+    .adm-grid { grid-template-columns: 1fr; }
+    .adm-field.s2 { grid-column: span 1; }
+    .adm-review-grid { grid-template-columns: 1fr; }
+    .adm-wrap { padding: 0 14px; }
+    .adm-page { padding: 32px 0 60px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+<div class="adm-wrap">
+
+    <div class="adm-bc">
+        <a href="/">Home</a><i class="bi bi-chevron-right"></i>
+        <a href="#">Admissions</a><i class="bi bi-chevron-right"></i>
+        <span>Entrance Form</span>
+    </div>
+
+    <form method="post" id="admForm" novalidate>
+    {% csrf_token %}
+
+    <!-- HEADER -->
+    <div class="adm-header">
+        <div>
+            <span class="adm-htag">Academic Year 2082 / 2083</span>
+            <h1>Entrance Examination<br>Application Form</h1>
+            <p>Siddhartha Secondary School &middot; Biratnagar, Koshi, Nepal</p>
+        </div>
+        <div class="adm-seal"><i class="bi bi-mortarboard-fill"></i></div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="adm-progress">
+        <!-- background fill line -->
+        <div class="adm-progress-fill" id="progressFill"></div>
+
+        <div class="adm-step s-active" id="si1">
+            <div class="adm-step-dot" id="sd1">1</div>
+            <div class="adm-step-label">Personal</div>
+        </div>
+        <div class="adm-step" id="si2">
+            <div class="adm-step-dot" id="sd2">2</div>
+            <div class="adm-step-label">Parents</div>
+        </div>
+        <div class="adm-step" id="si3">
+            <div class="adm-step-dot" id="sd3">3</div>
+            <div class="adm-step-label">Contact</div>
+        </div>
+        <div class="adm-step" id="si4">
+            <div class="adm-step-dot" id="sd4">4</div>
+            <div class="adm-step-label">Review</div>
+        </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="adm-body">
+
+        <!-- STEP 1 -->
+        <div class="adm-panel adm-active" id="p1">
+            <div class="adm-stitle">
+                <div class="adm-sicon"><i class="bi bi-person-fill"></i></div>
+                <div><h2>Applicant Details</h2><span>Personal information about the student</span></div>
+            </div>
+            <div class="val-banner" id="vb1"><i class="bi bi-exclamation-triangle-fill"></i> Please fill in all required fields before continuing.</div>
+            {% if form.errors %}<div style="background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.8rem;color:#dc2626;"><strong>Please correct the errors and resubmit.</strong></div>{% endif %}
+            <div class="adm-grid">
+                <div class="adm-field">
+                    <label class="adm-label">Full Name (English) <span class="req">*</span></label>
+                    {{ form.student_name_en }}
+                    <span class="field-err-msg" id="err_student_name_en">This field is required.</span>
+                    {{ form.student_name_en.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Full Name (Nepali)</label>
+                    {{ form.student_name_np }}
+                    <span class="adm-hint">Optional — Devanagari script</span>
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Date of Birth (AD) <span class="req">*</span></label>
+                    {{ form.dob_ad }}
+                    <span class="field-err-msg" id="err_dob_ad">This field is required.</span>
+                    {{ form.dob_ad.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Date of Birth (BS) <span class="req">*</span></label>
+                    {{ form.dob_bs }}
+                    <span class="adm-hint">e.g. 2065-04-15</span>
+                    <span class="field-err-msg" id="err_dob_bs">This field is required.</span>
+                    {{ form.dob_bs.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Nationality <span class="req">*</span></label>
+                    {{ form.nationality }}
+                    <span class="field-err-msg" id="err_nationality">This field is required.</span>
+                    {{ form.nationality.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Religion <span class="req">*</span></label>
+                    {{ form.religion }}
+                    <span class="field-err-msg" id="err_religion">This field is required.</span>
+                    {{ form.religion.errors }}
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="adm-panel" id="p2">
+            <div class="adm-stitle">
+                <div class="adm-sicon"><i class="bi bi-people-fill"></i></div>
+                <div><h2>Parental Information</h2><span>Father's and mother's details</span></div>
+            </div>
+            <div class="val-banner" id="vb2"><i class="bi bi-exclamation-triangle-fill"></i> Please fill in all required fields before continuing.</div>
+            <div class="adm-grid">
+                <div class="adm-field">
+                    <label class="adm-label">Father's Full Name <span class="req">*</span></label>
+                    {{ form.father_name }}
+                    <span class="field-err-msg" id="err_father_name">This field is required.</span>
+                    {{ form.father_name.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Father's Occupation <span class="req">*</span></label>
+                    {{ form.father_occupation }}
+                    <span class="field-err-msg" id="err_father_occupation">This field is required.</span>
+                    {{ form.father_occupation.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Mother's Full Name <span class="req">*</span></label>
+                    {{ form.mother_name }}
+                    <span class="field-err-msg" id="err_mother_name">This field is required.</span>
+                    {{ form.mother_name.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Mother's Occupation <span class="req">*</span></label>
+                    {{ form.mother_occupation }}
+                    <span class="field-err-msg" id="err_mother_occupation">This field is required.</span>
+                    {{ form.mother_occupation.errors }}
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="adm-panel" id="p3">
+            <div class="adm-stitle">
+                <div class="adm-sicon"><i class="bi bi-geo-alt-fill"></i></div>
+                <div><h2>Contact &amp; Academic</h2><span>Address, phone and previous school</span></div>
+            </div>
+            <div class="val-banner" id="vb3"><i class="bi bi-exclamation-triangle-fill"></i> Please fill in all required fields before continuing.</div>
+            <div class="adm-grid g1" style="margin-bottom:18px;">
+                <div class="adm-field">
+                    <label class="adm-label">Permanent Address <span class="req">*</span></label>
+                    {{ form.permanent_address }}
+                    <span class="field-err-msg" id="err_permanent_address">This field is required.</span>
+                    {{ form.permanent_address.errors }}
+                </div>
+            </div>
+            <div class="adm-grid">
+                <div class="adm-field">
+                    <label class="adm-label">Phone Number <span class="req">*</span></label>
+                    {{ form.phone_number }}
+                    <span class="adm-hint">e.g. 9800000000</span>
+                    <span class="field-err-msg" id="err_phone_number">This field is required.</span>
+                    {{ form.phone_number.errors }}
+                </div>
+                <div class="adm-field">
+                    <label class="adm-label">Grade Applying For <span class="req">*</span></label>
+                    {{ form.grade_applying_for }}
+                    <span class="adm-hint">e.g. Grade 9 or Grade 11</span>
+                    <span class="field-err-msg" id="err_grade_applying_for">This field is required.</span>
+                    {{ form.grade_applying_for.errors }}
+                </div>
+                <div class="adm-field s2">
+                    <label class="adm-label">Last School Attended <span class="req">*</span></label>
+                    {{ form.last_school_attended }}
+                    <span class="field-err-msg" id="err_last_school_attended">This field is required.</span>
+                    {{ form.last_school_attended.errors }}
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4 REVIEW -->
+        <div class="adm-panel" id="p4">
+            <div class="adm-stitle">
+                <div class="adm-sicon"><i class="bi bi-clipboard2-check-fill"></i></div>
+                <div><h2>Review Your Application</h2><span>Confirm all details before submitting</span></div>
+            </div>
+            <div class="adm-review-grid" id="reviewGrid"></div>
+            <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:16px 20px;font-size:0.82rem;color:#16a34a;display:flex;align-items:flex-start;gap:10px;">
+                <i class="bi bi-info-circle-fill" style="flex-shrink:0;margin-top:1px;"></i>
+                <span>By submitting you confirm all information provided is accurate. The school may contact you for verification.</span>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="adm-success" id="successState">
+            <div class="adm-success-icon"><i class="bi bi-check-lg"></i></div>
+            <h2>Application Submitted!</h2>
+            <p>Your entrance application has been received. The school will contact you within 3–5 working days.</p>
+            <div class="adm-success-ref" id="successRef">Application Received ✓</div>
+            <br><br>
+            <a href="/" class="adm-success-back"><i class="bi bi-house"></i> Return to Home</a>
+        </div>
+
+    </div><!-- end adm-body -->
+
+    <!-- NAV -->
+    <div class="adm-nav" id="admNav">
+        <button type="button" class="btn-back" id="btnBack" style="visibility:hidden;">
+            <i class="bi bi-arrow-left"></i> Back
+        </button>
+        <span class="adm-counter" id="stepCounter">Step 1 of 4</span>
+        <div>
+            <button type="button" class="btn-next" id="btnNext">
+                Next <i class="bi bi-arrow-right"></i>
+            </button>
+            <button type="submit" class="btn-submit" id="btnSubmit" style="display:none;">
+                <i class="bi bi-send-fill"></i> Submit Application
+            </button>
+        </div>
+    </div>
+
+    </form>
+
+</div>
+</div>
+
+<script>
+(function () {
+    var cur   = 1;
+    var total = 4;
+
+    /* Fields required per step */
+    var required = {
+        1: ['student_name_en', 'dob_ad', 'dob_bs', 'nationality', 'religion'],
+        2: ['father_name', 'father_occupation', 'mother_name', 'mother_occupation'],
+        3: ['permanent_address', 'phone_number', 'grade_applying_for', 'last_school_attended'],
+        4: []
+    };
+
+    /* Review labels */
+    var reviewFields = [
+        ['student_name_en',     'Name (English)'],
+        ['student_name_np',     'Name (Nepali)'],
+        ['dob_ad',              'DOB (AD)'],
+        ['dob_bs',              'DOB (BS)'],
+        ['nationality',         'Nationality'],
+        ['religion',            'Religion'],
+        ['father_name',         "Father's Name"],
+        ['father_occupation',   "Father's Occupation"],
+        ['mother_name',         "Mother's Name"],
+        ['mother_occupation',   "Mother's Occupation"],
+        ['permanent_address',   'Address'],
+        ['phone_number',        'Phone'],
+        ['grade_applying_for',  'Grade'],
+        ['last_school_attended','Last School']
+    ];
+
+    function getEl(id) { return document.getElementById(id); }
+
+    /* ── Validate current step ── */
+    function validate(step) {
+        var fields = required[step] || [];
+        var valid = true;
+
+        fields.forEach(function (name) {
+            var input = document.querySelector('[name="' + name + '"]');
+            var errEl = getEl('err_' + name);
+            if (!input) return;
+
+            /* clear previous */
+            input.classList.remove('inp-error');
+            if (errEl) errEl.classList.remove('show');
+
+            /* check empty */
+            var val = input.value ? input.value.trim() : '';
+            if (!val) {
+                input.classList.add('inp-error');
+                if (errEl) errEl.classList.add('show');
+                valid = false;
+            }
+        });
+
+        /* Show/hide top banner */
+        var banner = getEl('vb' + step);
+        if (banner) {
+            if (!valid) banner.classList.add('show');
+            else banner.classList.remove('show');
+        }
+
+        return valid;
+    }
+
+    /* ── Update progress bar ── */
+    function updateProgress(step) {
+        /* Update step circles */
+        for (var i = 1; i <= total; i++) {
+            var si = getEl('si' + i);
+            var sd = getEl('sd' + i);
+            if (!si || !sd) continue;
+            si.classList.remove('s-active', 's-done');
+            if (i < step) {
+                si.classList.add('s-done');
+                sd.innerHTML = '<i class="bi bi-check-lg" style="font-size:.75rem;font-weight:900;"></i>';
+            } else if (i === step) {
+                si.classList.add('s-active');
+                sd.textContent = i;
+            } else {
+                sd.textContent = i;
+            }
+        }
+
+        /* Animate fill line */
+        var fill = getEl('progressFill');
+        if (fill) {
+            /* progress bar spans between first and last dot centers */
+            var bar = document.querySelector('.adm-progress');
+            if (bar) {
+                var barW  = bar.offsetWidth;
+                var pad   = 40; /* padding on each side */
+                var inner = barW - (pad * 2);
+                var seg   = inner / (total - 1);
+                var pct   = (step - 1) * seg;
+                fill.style.width = pct + 'px';
+            }
+        }
+    }
+
+    /* ── Build review grid ── */
+    function buildReview() {
+        var grid = getEl('reviewGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        reviewFields.forEach(function (f) {
+            var el  = document.querySelector('[name="' + f[0] + '"]');
+            var val = (el && el.value.trim()) ? el.value.trim() : '—';
+            var div = document.createElement('div');
+            div.className = 'adm-review-item';
+            div.innerHTML = '<span class="adm-rlbl">' + f[1] + '</span>' +
+                            '<span class="adm-rval">' + val + '</span>';
+            grid.appendChild(div);
+        });
+    }
+
+    /* ── Navigate to a step ── */
+    function goTo(n) {
+        if (n < 1 || n > total) return;
+
+        /* Hide all panels */
+        for (var i = 1; i <= total; i++) {
+            var p = getEl('p' + i);
+            if (p) p.classList.remove('adm-active');
+        }
+
+        /* Show target */
+        var target = getEl('p' + n);
+        if (target) target.classList.add('adm-active');
+
+        /* Update UI */
+        updateProgress(n);
+
+        var btnBack   = getEl('btnBack');
+        var btnNext   = getEl('btnNext');
+        var btnSubmit = getEl('btnSubmit');
+        var counter   = getEl('stepCounter');
+
+        if (btnBack)   btnBack.style.visibility = (n === 1) ? 'hidden' : 'visible';
+        if (btnNext)   btnNext.style.display    = (n < total) ? 'inline-flex' : 'none';
+        if (btnSubmit) btnSubmit.style.display  = (n === total) ? 'inline-flex' : 'none';
+        if (counter)   counter.textContent      = 'Step ' + n + ' of ' + total;
+
+        if (n === 4) buildReview();
+
+        cur = n;
+
+        /* Scroll to top of form */
+        var hdr = document.querySelector('.adm-header');
+        if (hdr) hdr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ── Boot ── */
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* Wire Next button */
+        var btnNext = getEl('btnNext');
+        if (btnNext) {
+            btnNext.onclick = function () {
+                if (validate(cur)) {
+                    goTo(cur + 1);
+                } else {
+                    /* shake the button */
+                    btnNext.classList.remove('shake');
+                    void btnNext.offsetWidth; /* reflow to restart animation */
+                    btnNext.classList.add('shake');
+                    setTimeout(function () { btnNext.classList.remove('shake'); }, 400);
+                    /* scroll to first error */
+                    var firstErr = document.querySelector('.inp-error');
+                    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            };
+        }
+
+        /* Wire Back button */
+        var btnBack = getEl('btnBack');
+        if (btnBack) {
+            btnBack.onclick = function () { goTo(cur - 1); };
+        }
+
+        /* Clear error state when user starts typing */
+        document.querySelectorAll('.adm-page input, .adm-page select, .adm-page textarea').forEach(function (el) {
+            el.addEventListener('input', function () {
+                el.classList.remove('inp-error');
+                var errEl = getEl('err_' + el.name);
+                if (errEl) errEl.classList.remove('show');
+            });
+            el.addEventListener('change', function () {
+                el.classList.remove('inp-error');
+                var errEl = getEl('err_' + el.name);
+                if (errEl) errEl.classList.remove('show');
+            });
+        });
+
+        /* Initialize progress fill width */
+        updateProgress(1);
+
+        /* Handle Django POST errors — stay on step 1 */
+        {% if form.errors %}
+        goTo(1);
+        {% endif %}
+
+        /* Handle successful submission */
+        {% if form_submitted %}
+        for (var i = 1; i <= 4; i++) {
+            var pp = getEl('p' + i);
+            if (pp) pp.classList.remove('adm-active');
+        }
+        var nav = getEl('admNav');
+        if (nav) nav.style.display = 'none';
+        var suc = getEl('successState');
+        if (suc) suc.style.display = 'block';
+        var ref = getEl('successRef');
+        if (ref) ref.textContent = 'Application #{{ application_id }} Received ✓';
+        {% endif %}
+
+    });
+
+})();
+</script>
+
+{% endblock %}
